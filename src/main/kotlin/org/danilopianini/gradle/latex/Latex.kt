@@ -3,6 +3,7 @@ package org.danilopianini.gradle.latex
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
@@ -15,7 +16,7 @@ class Latex : Plugin<Project> {
          */
         const val TASK_GROUP = "LaTeX"
         const val EXTENSION_NAME = "latex"
-        val LOG = LoggerFactory.getLogger(Latex::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(Latex::class.java)
     }
 
     override fun apply(project: Project) {
