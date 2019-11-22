@@ -8,12 +8,6 @@ import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.register
 import java.util.concurrent.TimeUnit
 
-inline fun <reified T> Project.propertyWithDefault(default: T): Property<T> =
-  objects.property(T::class.java).apply { convention(default) }
-
-inline fun <reified T> Project.propertyWithDefault(noinline default: () -> T): Property<T> =
-  objects.property(T::class.java).apply { convention( default()) }
-
 /**
  * Gradle extension to create new dynamic tasks & maintain and manage latex artifacts.
  * Registered to Gradle as extension in LatexPlugin. Thereafter the instance can be accessed via project.latex
