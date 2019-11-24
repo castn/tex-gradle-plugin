@@ -29,22 +29,26 @@ class LatexArtifact internal constructor(
      * Represents tex file which is used to call bibtex, pdflatex
      * Must be set.
      */
-    val tex = project.propertyWithDefault {
+    val tex = project.filePropertyWithDefault {
         project.file(fromName("tex"))
     }
 
-    val aux = project.propertyWithDefault {
+    val aux = project.filePropertyWithDefault {
         project.file(fromName("aux"))
     }
 
-    val pdf = project.propertyWithDefault {
+    val bbl = project.filePropertyWithDefault {
+        project.file(fromName("bbl"))
+    }
+
+    val pdf = project.filePropertyWithDefault {
         project.file(fromName("pdf"))
     }
 
     /**
      * Represents bib file used to call bibtex.
      */
-    val bib = project.propertyWithDefault {
+    val bib = project.filePropertyWithDefault {
         project.file(fromName("bib")).takeIf(File::exists)
     }
 
@@ -78,12 +82,6 @@ class LatexArtifact internal constructor(
     }
 
     private fun fileFromName(extension: String) = project.file(fromName(extension))
-
-    fun flattenDependencyFiles(): List<File> {
-        return listOfNotNull(tex.get(), bib.get(), aux.get()) +
-                imageFiles.get() +
-                dependsOn.get().flatMap { it.flattenDependencyFiles() }
-    }
 
     internal val hasBib get() = bib.isPresent
 

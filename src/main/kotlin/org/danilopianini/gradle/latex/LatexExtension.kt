@@ -1,8 +1,13 @@
 package org.danilopianini.gradle.latex
 
+import org.danilopianini.gradle.latex.task.BibtexTask
+import org.danilopianini.gradle.latex.task.ConvertImagesTask
+import org.danilopianini.gradle.latex.task.PdfLatexTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.TaskProvider
 import java.util.concurrent.TimeUnit
 
 /**
@@ -35,36 +40,55 @@ open class LatexExtension @JvmOverloads constructor(
     init {
         configureEach { artifact ->
 
-            val pdfLatexPreBibtex =
-                project.tasks.register("pdfLatexPreBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
-                    task.artifact = artifact
-                    task.dependsOn(task.artifact.dependsOn.get().map { project.task("buildLatex${it.taskSuffix}") })
+            val convertImages: TaskProvider<ConvertImagesTask> =
+                project.tasks.register(
+                    "convertImagesForPdflatex${artifact.taskSuffix}",
+                    ConvertImagesTask::class.java
+                ) { task ->
+                    task.fromArtifact(artifact)
                 }
 
-            val bibTexTask = project.tasks.register("bibtex${artifact.taskSuffix}", BibtexTask::class.java) { task ->
-                task.artifact = artifact
+            val pdfLatexPreBibtex: TaskProvider<PdfLatexTask> =
+                project.tasks.register("pdflatexPreBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
+                    task.fromArtifact(artifact)
+                    task.dependsOn(convertImages)
+                }
+
+            val bibTexTask: TaskProvider<BibtexTask> =
+                project.tasks.register("bibtex${artifact.taskSuffix}", BibtexTask::class.java) { task ->
+                    task.fromArtifact(artifact)
 
                 // Skip executing this task, if no bibliography has been specified.
                 task.onlyIf {
-                    task.artifact.bib.isPresent
+                    artifact.bib.isPresent
                 }
 
                 task.dependsOn(pdfLatexPreBibtex)
             }
 
-            val pdfLatex =
-                project.tasks.register("pdfLatexAfterBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
-                    task.artifact = artifact
+            val pdfLatex: TaskProvider<PdfLatexTask> =
+                project.tasks.register("pdflatexAfterBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
+                    task.fromArtifact(artifact)
+                    task.dependsOn(convertImages)
                     if (artifact.hasBib) {
                         task.dependsOn(bibTexTask)
-                    } else {
-                        task.dependsOn(task.artifact.dependsOn.get().map { project.task("buildLatex${it.taskSuffix}") })
                     }
                 }
 
-            val run = project.tasks.register("buildLatex${artifact.taskSuffix}", LatexTask::class.java) { task ->
-                task.artifact = artifact
+            val run: TaskProvider<Task> = project.tasks.register("buildLatex${artifact.taskSuffix}") { task ->
+                task.group = Latex.TASK_GROUP
+                task.description = "Builds the ${artifact.name} LaTeX artifact."
+
                 task.dependsOn(pdfLatex)
+            }
+
+            val tasks: Set<TaskProvider<out Task>> = setOf(convertImages, pdfLatexPreBibtex, bibTexTask, pdfLatex, run)
+            val dependsOnTasks = artifact.dependsOn.get().map { project.tasks.named("buildLatex${it.taskSuffix}") }
+            // All tasks of this artifact should depend on the artifact's dependencies' tasks.
+            tasks.forEach { provider ->
+                provider.configure { task ->
+                    task.dependsOn(dependsOnTasks)
+                }
             }
 
             runAll.get().dependsOn(run)
