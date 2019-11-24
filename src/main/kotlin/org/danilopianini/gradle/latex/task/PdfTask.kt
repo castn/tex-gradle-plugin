@@ -2,20 +2,20 @@ package org.danilopianini.gradle.latex.task
 
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
-import org.danilopianini.gradle.latex.configuration.PdflatexTaskConfiguration
+import org.danilopianini.gradle.latex.configuration.PdfTaskConfiguration
 import org.gradle.api.tasks.*
 
-open class PdflatexTask : Exec(),
-    PdflatexTaskConfiguration {
+open class PdfTask : Exec(),
+    PdfTaskConfiguration {
 
     @get:Input
-    final override val pdflatexCommand = project.objects.property(String::class.java)
+    final override val pdfCommand = project.objects.property(String::class.java)
 
     @get:Input
-    final override val pdflatexQuiet = project.objects.property(Boolean::class.java)
+    final override val pdfQuiet = project.objects.property(Boolean::class.java)
 
     @get:Input
-    final override val pdflatexArguments = project.objects.listProperty(String::class.java)
+    final override val pdfArguments = project.objects.listProperty(String::class.java)
 
     @get:InputFile
     final override val tex = project.objects.fileProperty()
@@ -30,9 +30,9 @@ open class PdflatexTask : Exec(),
     }
 
     fun fromArtifact(artifact: LatexArtifact) {
-        pdflatexCommand.set(artifact.pdflatexCommand)
-        pdflatexQuiet.set(artifact.pdflatexQuiet)
-        pdflatexArguments.set(artifact.pdflatexArguments)
+        pdfCommand.set(artifact.pdfCommand)
+        pdfQuiet.set(artifact.pdfQuiet)
+        pdfArguments.set(artifact.pdfArguments)
         tex.set(artifact.tex)
         pdf.set(artifact.pdf)
     }
@@ -43,12 +43,12 @@ open class PdflatexTask : Exec(),
      */
     @TaskAction
     override fun exec() {
-        Latex.LOG.info("Executing ${pdflatexCommand.get()} for ${tex.get()}")
-        executable = pdflatexCommand.get()
-        if (pdflatexQuiet.get()) {
+        Latex.LOG.info("Executing ${pdfCommand.get()} for ${tex.get()}")
+        executable = pdfCommand.get()
+        if (pdfQuiet.get()) {
             args("-quiet")
         }
-        args(pdflatexArguments.get())
+        args(pdfArguments.get())
         args(tex.get().asFile.absolutePath)
 
         Latex.LOG.debug("Prepared command $commandLine")

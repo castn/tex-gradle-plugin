@@ -2,7 +2,7 @@ package org.danilopianini.gradle.latex.configuration
 
 import org.gradle.api.file.RegularFileProperty
 
-interface BibtexTaskConfiguration : BibtexCommandConfiguration {
+interface BibliographyTaskConfiguration : BibliographyCommandConfiguration {
 
     val aux: RegularFileProperty
 

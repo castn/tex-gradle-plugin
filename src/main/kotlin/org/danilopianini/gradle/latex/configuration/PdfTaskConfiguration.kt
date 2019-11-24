@@ -2,7 +2,7 @@ package org.danilopianini.gradle.latex.configuration
 
 import org.gradle.api.file.RegularFileProperty
 
-interface PdflatexTaskConfiguration : PdflatexCommandConfiguration {
+interface PdfTaskConfiguration : PdfCommandConfiguration {
 
     /**
      * Represents tex file which is used to call bibtex, pdflatex

@@ -3,14 +3,14 @@ package org.danilopianini.gradle.latex.configuration
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
-interface PdflatexCommandConfiguration {
+interface PdfCommandConfiguration {
 
-    val pdflatexCommand: Property<String>
+    val pdfCommand: Property<String>
 
-    val pdflatexQuiet: Property<Boolean>
+    val pdfQuiet: Property<Boolean>
 
     /**
      * Extra arguments to be passed to pdflatex when building this artifact.
      */
-    val pdflatexArguments: ListProperty<String>
+    val pdfArguments: ListProperty<String>
 }

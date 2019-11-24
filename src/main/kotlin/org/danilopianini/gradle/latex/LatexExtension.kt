@@ -1,11 +1,11 @@
 package org.danilopianini.gradle.latex
 
-import org.danilopianini.gradle.latex.configuration.BibtexCommandConfiguration
+import org.danilopianini.gradle.latex.configuration.BibliographyCommandConfiguration
 import org.danilopianini.gradle.latex.configuration.ConvertImagesCommandConfiguration
-import org.danilopianini.gradle.latex.configuration.PdflatexCommandConfiguration
-import org.danilopianini.gradle.latex.task.BibtexTask
+import org.danilopianini.gradle.latex.configuration.PdfCommandConfiguration
+import org.danilopianini.gradle.latex.task.BibliographyTask
 import org.danilopianini.gradle.latex.task.ConvertImagesTask
-import org.danilopianini.gradle.latex.task.PdflatexTask
+import org.danilopianini.gradle.latex.task.PdfTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -21,19 +21,19 @@ open class LatexExtension @JvmOverloads constructor(
     private val project: Project
     // val auxDir: Property<File> = project.propertyWithDefault(project.file(".gradle/latex-temp")),
 ) : NamedDomainObjectContainer<LatexArtifact> by LatexArtifactContainer(project),
-    PdflatexCommandConfiguration, BibtexCommandConfiguration, ConvertImagesCommandConfiguration {
+    PdfCommandConfiguration, BibliographyCommandConfiguration, ConvertImagesCommandConfiguration {
 
-    override val pdflatexCommand: Property<String> = project.propertyWithDefault { "pdflatex" }
+    override val pdfCommand: Property<String> = project.propertyWithDefault { "pdflatex" }
 
-    override val pdflatexQuiet: Property<Boolean> = project.propertyWithDefault { true }
+    override val pdfQuiet: Property<Boolean> = project.propertyWithDefault { true }
 
-    override val pdflatexArguments = project.listPropertyWithDefault {
+    override val pdfArguments = project.listPropertyWithDefault {
         listOf("-shell-escape", "-synctex=1", "-interaction=nonstopmode", "-halt-on-error")
     }
 
-    override val bibtexCommand: Property<String> = project.propertyWithDefault { "bibtex" }
+    override val bibliographyCommand: Property<String> = project.propertyWithDefault { "bibtex" }
 
-    override val inkscapeCommand: Property<String> = project.propertyWithDefault { "inkscape" }
+    override val convertImagesCommand: Property<String> = project.propertyWithDefault { "inkscape" }
 
     private val runAll = project.tasks.register("buildLatex") { task ->
         task.group = Latex.TASK_GROUP
@@ -51,14 +51,14 @@ open class LatexExtension @JvmOverloads constructor(
                     task.fromArtifact(artifact)
                 }
 
-            val pdflatexPreBibtex: TaskProvider<PdflatexTask> =
-                project.tasks.register("pdflatexPreBibtex${artifact.taskSuffix}", PdflatexTask::class.java) { task ->
+            val pdflatexPreBibtex: TaskProvider<PdfTask> =
+                project.tasks.register("pdflatexPreBibtex${artifact.taskSuffix}", PdfTask::class.java) { task ->
                     task.fromArtifact(artifact)
                     task.dependsOn(convertImages)
                 }
 
-            val bibTexTask: TaskProvider<BibtexTask> =
-                project.tasks.register("bibtex${artifact.taskSuffix}", BibtexTask::class.java) { task ->
+            val bibTexTask: TaskProvider<BibliographyTask> =
+                project.tasks.register("bibtex${artifact.taskSuffix}", BibliographyTask::class.java) { task ->
                     task.fromArtifact(artifact)
 
                 // Skip executing this task, if no bibliography has been specified.
@@ -69,8 +69,8 @@ open class LatexExtension @JvmOverloads constructor(
                     task.dependsOn(pdflatexPreBibtex)
             }
 
-            val pdflatex: TaskProvider<PdflatexTask> =
-                project.tasks.register("pdflatexAfterBibtex${artifact.taskSuffix}", PdflatexTask::class.java) { task ->
+            val pdflatex: TaskProvider<PdfTask> =
+                project.tasks.register("pdflatexAfterBibtex${artifact.taskSuffix}", PdfTask::class.java) { task ->
                     task.fromArtifact(artifact)
                     task.dependsOn(convertImages)
                     if (artifact.hasBib) {

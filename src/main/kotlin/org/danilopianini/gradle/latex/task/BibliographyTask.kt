@@ -2,14 +2,14 @@ package org.danilopianini.gradle.latex.task
 
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
-import org.danilopianini.gradle.latex.configuration.BibtexTaskConfiguration
+import org.danilopianini.gradle.latex.configuration.BibliographyTaskConfiguration
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.*
 
-open class BibtexTask : Exec(), BibtexTaskConfiguration {
+open class BibliographyTask : Exec(), BibliographyTaskConfiguration {
 
     @get:Input
-    final override val bibtexCommand = project.objects.property(String::class.java)
+    final override val bibliographyCommand = project.objects.property(String::class.java)
 
     @get:InputFile
     final override val aux = project.objects.fileProperty()
@@ -31,7 +31,7 @@ open class BibtexTask : Exec(), BibtexTaskConfiguration {
     }
 
     fun fromArtifact(artifact: LatexArtifact) {
-        bibtexCommand.set(artifact.bibtexCommand)
+        bibliographyCommand.set(artifact.bibliographyCommand)
         aux.set(artifact.aux)
         bib.set(artifact.bib)
         bbl.set(artifact.bbl)
@@ -44,7 +44,7 @@ open class BibtexTask : Exec(), BibtexTaskConfiguration {
     override fun exec() {
         val aux = aux.get().asFile
         if (!aux.exists()) {
-            throw GradleException("${aux.absolutePath} does not exist, cannot invoke ${bibtexCommand.get()}.")
+            throw GradleException("${aux.absolutePath} does not exist, cannot invoke ${bibliographyCommand.get()}.")
         }
         val containsCitations = aux.useLines { lines ->
             lines.any { line ->
@@ -52,7 +52,7 @@ open class BibtexTask : Exec(), BibtexTaskConfiguration {
             }
         }
         if (containsCitations) {
-            executable = bibtexCommand.get()
+            executable = bibliographyCommand.get()
             args(aux.path)
             args
             super.exec()

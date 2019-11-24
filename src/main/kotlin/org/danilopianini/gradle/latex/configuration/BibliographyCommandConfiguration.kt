@@ -2,7 +2,7 @@ package org.danilopianini.gradle.latex.configuration
 
 import org.gradle.api.provider.Property
 
-interface BibtexCommandConfiguration {
+interface BibliographyCommandConfiguration {
 
-    val bibtexCommand: Property<String>
+    val bibliographyCommand: Property<String>
 }

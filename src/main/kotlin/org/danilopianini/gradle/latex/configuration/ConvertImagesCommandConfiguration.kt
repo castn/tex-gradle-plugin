@@ -4,5 +4,5 @@ import org.gradle.api.provider.Property
 
 interface ConvertImagesCommandConfiguration {
 
-    val inkscapeCommand: Property<String>
+    val convertImagesCommand: Property<String>
 }

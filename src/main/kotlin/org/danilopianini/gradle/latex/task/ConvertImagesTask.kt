@@ -12,7 +12,7 @@ open class ConvertImagesTask : DefaultTask(),
     ConvertImagesTaskConfiguration {
 
     @get:Input
-    final override val inkscapeCommand = project.objects.property(String::class.java)
+    final override val convertImagesCommand = project.objects.property(String::class.java)
 
     @get:InputFiles
     final override val images = project.objects.fileCollection()
@@ -23,7 +23,7 @@ open class ConvertImagesTask : DefaultTask(),
     }
 
     fun fromArtifact(artifact: LatexArtifact) {
-        inkscapeCommand.set(artifact.inkscapeCommand)
+        convertImagesCommand.set(artifact.convertImagesCommand)
         images.setFrom(artifact.images)
     }
 
