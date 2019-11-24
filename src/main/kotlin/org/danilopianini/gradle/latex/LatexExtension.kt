@@ -1,11 +1,8 @@
 package org.danilopianini.gradle.latex
 
-import org.gradle.api.DefaultTask
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.gradle.kotlin.dsl.getValue
-import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.register
 import java.util.concurrent.TimeUnit
 
 /**
@@ -14,65 +11,74 @@ import java.util.concurrent.TimeUnit
  *
  */
 open class LatexExtension @JvmOverloads constructor(
-  private val project: Project,
-  // val auxDir: Property<File> = project.propertyWithDefault(project.file(".gradle/latex-temp")),
-  /**
-   * Utilities for easy execution.
-   * After adding extension, can be accessed via project.latex.utils
-   */
-  val quiet: Property<Boolean> = project.propertyWithDefault(true),
-  val terminalEmulator: Property<String> = project.propertyWithDefault("bash"),
-  val waitTime: Property<Long> = project.propertyWithDefault(1),
-  val waitUnit: Property<TimeUnit> = project.propertyWithDefault(TimeUnit.MINUTES),
-  val pdfLatexCommand: Property<String> = project.propertyWithDefault("pdflatex"),
-  val bibTexCommand: Property<String> = project.propertyWithDefault("bibtex"),
-  val inkscapeCommand: Property<String> = project.propertyWithDefault("inkscape"),
-  val gitLatexdiffCommand: Property<String> = project.propertyWithDefault("git latexdiff")
-) {
+    private val project: Project,
+    // val auxDir: Property<File> = project.propertyWithDefault(project.file(".gradle/latex-temp")),
+    /**
+     * Utilities for easy execution.
+     * After adding extension, can be accessed via project.latex.utils
+     */
+    val quiet: Property<Boolean> = project.propertyWithDefault { true },
+    val terminalEmulator: Property<String> = project.propertyWithDefault { "bash" },
+    val waitTime: Property<Long> = project.propertyWithDefault { 1L },
+    val waitUnit: Property<TimeUnit> = project.propertyWithDefault { TimeUnit.MINUTES },
+    val pdfLatexCommand: Property<String> = project.propertyWithDefault { "pdflatex" },
+    val bibTexCommand: Property<String> = project.propertyWithDefault { "bibtex" },
+    val inkscapeCommand: Property<String> = project.propertyWithDefault { "inkscape" },
+    val gitLatexdiffCommand: Property<String> = project.propertyWithDefault { "git latexdiff" }
+) : NamedDomainObjectContainer<LatexArtifact> by LatexArtifactContainer(project) {
 
-  val runAll by project.tasks.register<DefaultTask>("buildLatex") {
-    group = Latex.TASK_GROUP
-    description = "Run all LaTeX tasks"
-  }
+    private val runAll = project.tasks.register("buildLatex") { task ->
+        task.group = Latex.TASK_GROUP
+        task.description = "Run all LaTeX tasks"
+    }
 
-  @JvmOverloads operator fun String.invoke(configuration: LatexArtifactBuilder.() -> Unit = { }): LatexArtifact = LatexArtifactBuilder(project, this)
-    .also(configuration)
-    .let { builder ->
-      LatexArtifact(
-        this,
-        tex = project.file(with(builder.name) { if (endsWith(".tex")) this else "$this.tex" }),
-        bib = builder.bib?.let { project.file(it) } ?.takeIf { it.exists() },
-        pdf = builder.fileFromName("pdf"),
-        aux = builder.fileFromName("aux"),
-        dependsOn = builder.dependsOn,
-        imageFiles = builder.images,
-        extraArgs = builder.extraArguments,
-        quiet = builder.quiet ?: quiet.get()
-      )
-    }.also {
-      Latex.LOG.debug("Produced {}", it)
-      // create new task and set its properties using the artifact
-      fun LatexArtifact.buildName() = "buildLatex.${name}"
-      val completionTask by project.tasks.register<LatexTask>(it.buildName()) {
-        artifact = it
-        description = "Builds a LaTeX project"
-      }
-      runAll.dependsOn(completionTask)
-      val pdfLatexTask by project.tasks.register<PdfLatexTask>("pdfLatex.${this}") {
-        artifact = it
-        dependsOn(artifact.dependsOn.map { project.task(it.buildName()) })
-      }
-      completionTask.dependsOn(pdfLatexTask)
-      if (it.bib != null) {
-        val bibTexTask by project.tasks.register<BibtexTask>("bibtex.${this}") {
-          artifact = it
-          dependsOn(pdfLatexTask)
+    init {
+        configureEach { artifact ->
+
+            val pdfLatexPreBibtex =
+                project.tasks.register("pdfLatexPreBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
+                    task.artifact = artifact
+                    task.dependsOn(task.artifact.dependsOn.get().map { project.task("buildLatex${it.taskSuffix}") })
+                }
+
+            val bibTexTask = project.tasks.register("bibtex${artifact.taskSuffix}", BibtexTask::class.java) { task ->
+                task.artifact = artifact
+
+                // Skip executing this task, if no bibliography has been specified.
+                task.onlyIf {
+                    task.artifact.bib.isPresent
+                }
+
+                task.dependsOn(pdfLatexPreBibtex)
+            }
+
+            val pdfLatex =
+                project.tasks.register("pdfLatexAfterBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
+                    task.artifact = artifact
+                    if (artifact.hasBib) {
+                        task.dependsOn(bibTexTask)
+                    } else {
+                        task.dependsOn(task.artifact.dependsOn.get().map { project.task("buildLatex${it.taskSuffix}") })
+                    }
+                }
+
+            val run = project.tasks.register("buildLatex${artifact.taskSuffix}", LatexTask::class.java) { task ->
+                task.artifact = artifact
+                task.dependsOn(pdfLatex)
+            }
+
+            runAll.get().dependsOn(run)
         }
-        val pdfLatexPass2 by project.tasks.register<PdfLatexTask>("pdfLatexAfterBibtex.${this}") {
-          artifact = it
-          dependsOn(bibTexTask)
+    }
+
+    @JvmOverloads
+    @Deprecated(message = "Create LatexArtifact directly using create().")
+    @Suppress("DEPRECATION")
+    operator fun String.invoke(configuration: LatexArtifactBuilder.() -> Unit = { }): LatexArtifact {
+        return create(this) { artifact ->
+            LatexArtifactBuilder(project, this)
+                .apply(configuration)
+                .applyTo(artifact)
         }
-        completionTask.dependsOn(pdfLatexPass2)
-      }
     }
 }

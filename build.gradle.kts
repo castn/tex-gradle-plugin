@@ -14,7 +14,6 @@ plugins {
     id("com.gradle.plugin-publish") version Versions.com_gradle_plugin_publish_gradle_plugin
     id ("org.danilopianini.publish-on-central") version Versions.org_danilopianini_publish_on_central_gradle_plugin
     id("org.jetbrains.dokka") version Versions.org_jetbrains_dokka
-    id("com.gradle.build-scan") version Versions.com_gradle_build_scan_gradle_plugin
 }
 
 gitSemVer {
@@ -126,9 +125,4 @@ if (System.getenv("CI") == true.toString()) {
         val signingPassword: String? by project
         useInMemoryPgpKeys(signingKey, signingPassword)
     }
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
 }

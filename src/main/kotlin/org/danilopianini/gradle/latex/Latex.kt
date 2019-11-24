@@ -2,7 +2,6 @@ package org.danilopianini.gradle.latex
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.create
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -20,6 +19,11 @@ class Latex : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        project.extensions.create<LatexExtension>(EXTENSION_NAME, project)
+        project.extensions.create(
+            LatexExtension::class.java,
+            EXTENSION_NAME,
+            LatexExtension::class.java,
+            project
+        )
     }
 }

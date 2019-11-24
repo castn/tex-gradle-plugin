@@ -3,14 +3,13 @@ package org.danilopianini.gradle.latex
 import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.gradle.kotlin.dsl.*
 import java.io.File
 
 /**
  * Utility methods related to ant.
  *
  */
-class LatexUtils @JvmOverloads constructor(
+class LatexUtils constructor(
     val project: Project
 ) {
 
@@ -25,25 +24,15 @@ class LatexUtils @JvmOverloads constructor(
     * @param artifact Any Latex artifact with the tex and bib properties set.
     */
     fun bibTex(artifact: LatexArtifact, auxDir: File = project.projectDir) {
-        LOG.info("Executing bibtex for {}", artifact.tex)
-        require(artifact.bib != null) {
+        val tex = artifact.tex.get()
+        val bib = artifact.bib.get()
+        LOG.info("Executing bibtex for {}", tex)
+        require(bib != null) {
             "Cannot run BibTex on a null resource: ${artifact}"
         }
-        project.ant.withGroovyBuilder {
-            "copy"(
-                "file" to artifact.bib.absolutePath,
-                "todir" to auxDir.absolutePath,
-                "overwrite" to "true",
-                "force" to "true"
-            )
-            "exec"(
-                "executable" to "bibtex",
-                "dir" to auxDir.absolutePath,
-                "failonerror" to "true"
-            ) {
-                "arg"("value" to artifact.tex)
-            }
-        }
+        val auxBib = auxDir.resolve(bib.name)
+        bib.copyTo(auxBib, true)
+        Runtime.getRuntime().exec("bibtex $tex", null, auxDir)
    }
 
     // /**

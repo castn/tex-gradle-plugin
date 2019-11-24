@@ -1,6 +1,7 @@
 package org.danilopianini.gradle.latex
 
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.get
 
 /**
  * Gradle task to run pdflatex on a TeX file.
@@ -8,9 +9,13 @@ import org.gradle.api.tasks.TaskAction
  * 
  * @author csabasulyok
  */
-open class PdfLatexTask : LatexTask() {
+internal open class PdfLatexTask : LatexTask() {
 
-  override fun getDescription() =  "Uses pdflatex to compile ${artifact.tex} into ${artifact.pdf}"
+    private val extension = project.extensions[Latex.EXTENSION_NAME] as LatexExtension
+
+    init {
+        description = "Uses pdflatex to compile ${artifact.tex} into ${artifact.pdf.get()}"
+    }
 
   /**
    * Main task action.
@@ -20,10 +25,10 @@ open class PdfLatexTask : LatexTask() {
   fun pdfLatex() {
     Latex.LOG.info("Executing ${extension.pdfLatexCommand.get()} for {}", artifact.tex)
     val command = StringBuilder(extension.pdfLatexCommand.get())
-      .append(if (artifact.quiet) " -quiet " else " ")
-      .append(artifact.extraArgs.joinToString(" "))
+        .append(if (artifact.quiet.get()) " -quiet " else " ")
+        .append(artifact.extraArgs.get().joinToString(" "))
       .append(' ')
-      .append(artifact.tex.absolutePath)
+        .append(artifact.tex.get().absolutePath)
       .toString()
     Latex.LOG.debug("Prepared command {}", command)
     command.runScript()

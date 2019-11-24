@@ -4,26 +4,29 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.kotlin.dsl.get
 import java.io.File
 import java.io.PrintWriter
 import java.util.concurrent.TimeUnit
-import kotlin.system.exitProcess
 
-abstract class LatexTask : DefaultTask() {
+internal abstract class LatexTask : DefaultTask() {
     /**
      * Latex artifact used to run current task.
      */
+    @get:Input
     lateinit var artifact: LatexArtifact
-    val extension: LatexExtension = project.extensions.get(Latex.EXTENSION_NAME) as LatexExtension
+    private val extension = project.extensions[Latex.EXTENSION_NAME] as LatexExtension
 
     init {
         group = Latex.TASK_GROUP
+        description = "Builds the ${artifact.name} LaTeX artifact."
         logging.captureStandardError(LogLevel.ERROR)
         logging.captureStandardOutput(LogLevel.ERROR)
     }
+
     /**
      * Collection of all files whose change should trigger this task.
      * Collected for Gradle's continuous build feature.
@@ -33,15 +36,17 @@ abstract class LatexTask : DefaultTask() {
      * - outputs (PDF) of dependent TeX files
      * - auxiliary files/folders
      */
-    @InputFiles
-    open fun inputFiles(): FileCollection = project.files(*artifact.flattenDependencies().toTypedArray())
+    @get:InputFiles
+    open val inputFiles: FileCollection
+        get() = project.files(*artifact.flattenDependencyFiles().toTypedArray())
 
     /**
      * Output of current task. Not used by task itself.
      * Set for Gradle's continuous build feature.
      */
-    @OutputFile
-    open fun pdf() = artifact.pdf
+    @get:OutputFile
+    open val pdf
+        get() = artifact.pdf
 
     fun String.runScript(
         terminalEmulator: String = extension.terminalEmulator.get(),
@@ -61,7 +66,14 @@ abstract class LatexTask : DefaultTask() {
             .start()
         shell.inputStream.copyTo(System.out)
         PrintWriter(shell.outputStream).use {
-            Latex.LOG.debug("Launching {} in {} from directory {}, waiting up to {} {} for termination.", this, terminalEmulator, from, waitTime, waitUnit);
+            Latex.LOG.debug(
+                "Launching {} in {} from directory {}, waiting up to {} {} for termination.",
+                this,
+                terminalEmulator,
+                from,
+                waitTime,
+                waitUnit
+            )
             it.println("$this \n exit")
         }
         val terminatedNaturally = shell.waitFor(waitTime, waitUnit)

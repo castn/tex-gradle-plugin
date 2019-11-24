@@ -1,6 +1,6 @@
 package org.danilopianini.gradle.latex
 
-import org.gradle.api.file.FileCollection
+import org.gradle.api.Project
 import java.io.File
 
 /**
@@ -8,49 +8,87 @@ import java.io.File
  * Used to maintain a graph of dependencies.
  *
  */
-data class LatexArtifact @JvmOverloads constructor(
-    val name: String,
+class LatexArtifact internal constructor(
+    val project: Project,
+    val name: String
+) {
+
+    private fun fromName(extension: String): String {
+        return when {
+            name.endsWith(".tex") -> {
+                when (extension) {
+                    "tex" -> name
+                    else -> name.substringAfterLast('.') + extension
+                }
+            }
+            else -> "$name.$extension"
+        }
+    }
 
     /**
      * Represents tex file which is used to call bibtex, pdflatex
      * Must be set.
      */
-    val tex: File,
+    val tex = project.propertyWithDefault {
+        project.file(fromName("tex"))
+    }
 
-    val aux: File,
+    val aux = project.propertyWithDefault {
+        project.file(fromName("aux"))
+    }
 
-    val pdf: File,
+    val pdf = project.propertyWithDefault {
+        project.file(fromName("pdf"))
+    }
 
     /**
      * Represents bib file used to call bibtex.
      */
-    val bib: File? = null,
+    val bib = project.propertyWithDefault {
+        project.file(fromName("bib")).takeIf(File::exists)
+    }
 
     /**
      * Collection of dependencies which have to be compiled
      * in order for this one to work (e.g. used with \input).
      */
-    val dependsOn: Iterable<LatexArtifact> = emptyList(),
+    val dependsOn = project.setPropertyWithDefault { emptySet<LatexArtifact>() }
 
     /**
      * Collection of image files or directories with images
      * which have to be transformed because LaTeX cannot use them directly (e.g. svg, emf).
      * These are transformed to PDFs which then can be included in pdflatex.
      */
-    val imageFiles: Iterable<File> = emptyList(),
+    val imageFiles = project.setPropertyWithDefault { emptySet<File>() }
 
     /**
      * Extra arguments to be passed to pdflatex when building this artifact.
      */
-    val extraArgs: Iterable<String> = listOf(),
+    val extraArgs = project.listPropertyWithDefault {
+        listOf("-shell-escape", "-synctex=1", "-interaction=nonstopmode", "-halt-on-error")
+    }
 
     /**
      * Differential documents to get produced.
      */
-    val diffs: Iterable<Int> = emptyList(),
+    val diffs = project.listPropertyWithDefault { emptyList<Int>() }
 
-    val quiet: Boolean = true
+    val quiet = project.propertyWithDefault {
+        project.extensions.findByType(LatexExtension::class.java)?.quiet?.get() ?: true
+    }
 
-) {
-    fun flattenDependencies(): List<File> = listOf(tex, bib, aux).filterNotNull() + imageFiles + dependsOn.flatMap { it.flattenDependencies() }
+    private fun fileFromName(extension: String) = project.file(fromName(extension))
+
+    fun flattenDependencyFiles(): List<File> {
+        return listOfNotNull(tex.get(), bib.get(), aux.get()) +
+                imageFiles.get() +
+                dependsOn.get().flatMap { it.flattenDependencyFiles() }
+    }
+
+    internal val hasBib get() = bib.isPresent
+
+    internal val taskSuffix = name
+        .removeSuffix(".tex")
+        .split(File.pathSeparatorChar, '-', '.')
+        .joinToString("", transform = String::capitalize)
 }
