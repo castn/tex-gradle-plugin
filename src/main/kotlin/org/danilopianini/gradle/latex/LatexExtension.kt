@@ -1,8 +1,7 @@
 package org.danilopianini.gradle.latex
 
-import org.danilopianini.gradle.latex.configuration.BibliographyCommandConfiguration
-import org.danilopianini.gradle.latex.configuration.ConvertImagesCommandConfiguration
-import org.danilopianini.gradle.latex.configuration.PdfCommandConfiguration
+import org.danilopianini.gradle.latex.command.*
+import org.danilopianini.gradle.latex.configuration.ExtensionConfiguration
 import org.danilopianini.gradle.latex.task.BibliographyTask
 import org.danilopianini.gradle.latex.task.ConvertImagesTask
 import org.danilopianini.gradle.latex.task.PdfTask
@@ -17,23 +16,19 @@ import org.gradle.api.tasks.TaskProvider
  * Registered to Gradle as extension in LatexPlugin. Thereafter the instance can be accessed via project.latex
  *
  */
-open class LatexExtension @JvmOverloads constructor(
+open class LatexExtension(
     private val project: Project
     // val auxDir: Property<File> = project.propertyWithDefault(project.file(".gradle/latex-temp")),
 ) : NamedDomainObjectContainer<LatexArtifact> by LatexArtifactContainer(project),
-    PdfCommandConfiguration, BibliographyCommandConfiguration, ConvertImagesCommandConfiguration {
+    ExtensionConfiguration {
 
-    override val pdfCommand: Property<String> = project.propertyWithDefault { "pdflatex" }
+    override val pdfCommand: Property<PdfCommand> = project.propertyWithDefault { PdflatexCommand }
 
-    override val pdfQuiet: Property<Boolean> = project.propertyWithDefault { true }
+    override val bibliographyCommand: Property<BibliographyCommand> = project.propertyWithDefault { BibtexCommand }
 
-    override val pdfArguments = project.listPropertyWithDefault {
-        listOf("-shell-escape", "-synctex=1", "-interaction=nonstopmode", "-halt-on-error")
-    }
+    override val convertImagesCommand: Property<ConvertImagesCommand> = project.propertyWithDefault { InkscapeCommand }
 
-    override val bibliographyCommand: Property<String> = project.propertyWithDefault { "bibtex" }
-
-    override val convertImagesCommand: Property<String> = project.propertyWithDefault { "inkscape" }
+    override val quiet: Property<Boolean> = project.propertyWithDefault { true }
 
     private val runAll = project.tasks.register("buildLatex") { task ->
         task.group = Latex.TASK_GROUP

@@ -2,24 +2,31 @@ package org.danilopianini.gradle.latex.task
 
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
-import org.danilopianini.gradle.latex.configuration.BibliographyTaskConfiguration
-import org.gradle.api.GradleException
+import org.danilopianini.gradle.latex.command.BibliographyCommand
+import org.danilopianini.gradle.latex.configuration.BibliographyConfiguration
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.process.internal.ExecAction
 
-open class BibliographyTask : Exec(), BibliographyTaskConfiguration {
+open class BibliographyTask : Exec(), BibliographyConfiguration {
 
     @get:Input
-    final override val bibliographyCommand = project.objects.property(String::class.java)
+    final override val bibliographyCommand: Property<BibliographyCommand> =
+        project.objects.property(BibliographyCommand::class.java)
+
+    @get:Input
+    final override val quiet: Property<Boolean> = project.objects.property(Boolean::class.java)
 
     @get:InputFile
-    final override val aux = project.objects.fileProperty()
+    final override val aux: RegularFileProperty = project.objects.fileProperty()
 
     @get:InputFile
-    final override val bib = project.objects.fileProperty()
+    final override val bib: RegularFileProperty = project.objects.fileProperty()
 
     @get:Input
     @get:OutputFile
-    final override val bbl = project.objects.fileProperty()
+    final override val bbl: RegularFileProperty = project.objects.fileProperty()
 
     init {
         group = Latex.TASK_GROUP
@@ -32,32 +39,15 @@ open class BibliographyTask : Exec(), BibliographyTaskConfiguration {
 
     fun fromArtifact(artifact: LatexArtifact) {
         bibliographyCommand.set(artifact.bibliographyCommand)
+        quiet.set(artifact.quiet)
         aux.set(artifact.aux)
         bib.set(artifact.bib)
         bbl.set(artifact.bbl)
     }
 
-    /**
-     * Execute bibtex command.
-     */
     @TaskAction
     override fun exec() {
-        val aux = aux.get().asFile
-        if (!aux.exists()) {
-            throw GradleException("${aux.absolutePath} does not exist, cannot invoke ${bibliographyCommand.get()}.")
-        }
-        val containsCitations = aux.useLines { lines ->
-            lines.any { line ->
-                line.contains("""\citation""")
-            }
-        }
-        if (containsCitations) {
-            executable = bibliographyCommand.get()
-            args(aux.path)
-            args
-            super.exec()
-        } else {
-            Latex.LOG.warn("No citation in ${aux.absolutePath}, BibTeX not invoked.")
-        }
+        val action: ExecAction = execActionFactory.newExecAction()
+        bibliographyCommand.get().execute(action, this)
     }
 }

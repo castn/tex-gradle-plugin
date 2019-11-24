@@ -1,10 +1,10 @@
 package org.danilopianini.gradle.latex
 
-import org.danilopianini.gradle.latex.configuration.BibliographyTaskConfiguration
-import org.danilopianini.gradle.latex.configuration.ConvertImagesTaskConfiguration
-import org.danilopianini.gradle.latex.configuration.PdfTaskConfiguration
+import org.danilopianini.gradle.latex.configuration.BibliographyConfiguration
+import org.danilopianini.gradle.latex.configuration.ConvertImagesConfiguration
+import org.danilopianini.gradle.latex.configuration.ExtensionConfiguration
+import org.danilopianini.gradle.latex.configuration.PdfConfiguration
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.get
 import java.io.File
 
@@ -15,8 +15,7 @@ import java.io.File
 class LatexArtifact internal constructor(
     val project: Project,
     val name: String
-) : BibliographyTaskConfiguration, ConvertImagesTaskConfiguration,
-    PdfTaskConfiguration {
+) : ExtensionConfiguration, BibliographyConfiguration, ConvertImagesConfiguration, PdfConfiguration {
 
     private fun fromName(extension: String): String {
         return when {
@@ -30,15 +29,13 @@ class LatexArtifact internal constructor(
         }
     }
 
-    override val bibliographyCommand: Property<String> = project.propertyWithDefault(latexExtension.bibliographyCommand)
+    override val bibliographyCommand = project.propertyWithDefault(latexExtension.bibliographyCommand)
 
-    override val pdfCommand: Property<String> = project.propertyWithDefault(latexExtension.pdfCommand)
+    override val pdfCommand = project.propertyWithDefault(latexExtension.pdfCommand)
 
-    override val pdfQuiet: Property<Boolean> = project.propertyWithDefault(latexExtension.pdfQuiet)
+    override val quiet = project.propertyWithDefault(latexExtension.quiet)
 
-    override val pdfArguments = project.listPropertyWithDefault(latexExtension.pdfArguments)
-
-    override val convertImagesCommand: Property<String> =
+    override val convertImagesCommand =
         project.propertyWithDefault(latexExtension.convertImagesCommand)
 
     override val tex = project.filePropertyWithDefault {

@@ -2,7 +2,7 @@ package org.danilopianini.gradle.latex.configuration
 
 import org.gradle.api.file.ConfigurableFileCollection
 
-interface ConvertImagesTaskConfiguration : ConvertImagesCommandConfiguration {
+interface ConvertImagesConfiguration : ConvertImagesCommandConfiguration {
 
     /**
      * Collection of image files or directories with images

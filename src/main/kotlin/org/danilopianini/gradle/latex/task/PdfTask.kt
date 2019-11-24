@@ -2,27 +2,27 @@ package org.danilopianini.gradle.latex.task
 
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
-import org.danilopianini.gradle.latex.configuration.PdfTaskConfiguration
+import org.danilopianini.gradle.latex.command.PdfCommand
+import org.danilopianini.gradle.latex.configuration.PdfConfiguration
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.process.internal.ExecAction
 
-open class PdfTask : Exec(),
-    PdfTaskConfiguration {
-
-    @get:Input
-    final override val pdfCommand = project.objects.property(String::class.java)
+open class PdfTask : Exec(), PdfConfiguration {
 
     @get:Input
-    final override val pdfQuiet = project.objects.property(Boolean::class.java)
+    final override val pdfCommand: Property<PdfCommand> = project.objects.property(PdfCommand::class.java)
 
     @get:Input
-    final override val pdfArguments = project.objects.listProperty(String::class.java)
+    final override val quiet: Property<Boolean> = project.objects.property(Boolean::class.java)
 
     @get:InputFile
-    final override val tex = project.objects.fileProperty()
+    final override val tex: RegularFileProperty = project.objects.fileProperty()
 
     @get:Input
     @get:OutputFile
-    final override val pdf = project.objects.fileProperty()
+    final override val pdf: RegularFileProperty = project.objects.fileProperty()
 
     init {
         group = Latex.TASK_GROUP
@@ -31,28 +31,14 @@ open class PdfTask : Exec(),
 
     fun fromArtifact(artifact: LatexArtifact) {
         pdfCommand.set(artifact.pdfCommand)
-        pdfQuiet.set(artifact.pdfQuiet)
-        pdfArguments.set(artifact.pdfArguments)
+        quiet.set(artifact.quiet)
         tex.set(artifact.tex)
         pdf.set(artifact.pdf)
     }
 
-    /**
-     * Main task action.
-     * Empties auxiliary directory.
-     */
     @TaskAction
     override fun exec() {
-        Latex.LOG.info("Executing ${pdfCommand.get()} for ${tex.get()}")
-        executable = pdfCommand.get()
-        if (pdfQuiet.get()) {
-            args("-quiet")
-        }
-        args(pdfArguments.get())
-        args(tex.get().asFile.absolutePath)
-
-        Latex.LOG.debug("Prepared command $commandLine")
-        super.exec()
-        super.exec()
+        val action: ExecAction = execActionFactory.newExecAction()
+        pdfCommand.get().execute(action, this)
     }
 }
