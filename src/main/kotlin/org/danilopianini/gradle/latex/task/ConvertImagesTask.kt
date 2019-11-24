@@ -3,13 +3,17 @@ package org.danilopianini.gradle.latex.task
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
-class ConvertImagesTask : DefaultTask() {
+open class ConvertImagesTask : DefaultTask(), ConvertImagesConfiguration {
 
     @get:InputFiles
-    val images = project.objects.fileCollection()
+    final override val images = project.objects.fileCollection()
+
+    @get:Input
+    final override val inkscapeCommand = latexExtension.inkscapeCommand
 
     init {
         group = Latex.TASK_GROUP

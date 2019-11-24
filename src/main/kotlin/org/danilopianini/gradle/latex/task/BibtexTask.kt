@@ -2,41 +2,38 @@ package org.danilopianini.gradle.latex.task
 
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
-import org.danilopianini.gradle.latex.LatexExtension
 import org.gradle.api.GradleException
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.get
-import java.io.File
 import java.nio.file.Files
 
-internal open class BibtexTask : Exec() {
-
-    private val extension = project.extensions[Latex.EXTENSION_NAME] as LatexExtension
+open class BibtexTask : Exec(), BibtexConfiguration {
 
     @get:InputFile
-    val aux: Property<File> = project.objects.property(File::class.java)
+    final override val aux = project.objects.fileProperty()
 
     @get:InputFile
-    val bib: Property<File> = project.objects.property(File::class.java)
+    final override val bib = project.objects.fileProperty()
 
     @get:Input
     @get:OutputFile
-    val bbl: Property<File> = project.objects.property(File::class.java)
+    final override val bbl = project.objects.fileProperty()
+
+    @get:Input
+    final override val bibtexCommand = latexExtension.bibTexCommand
 
     init {
         group = Latex.TASK_GROUP
         description = "Uses BibTex to compile ${aux.get()} into ${bbl.get()}"
 
         onlyIf {
-            bib.orNull?.exists() ?: false
+            bib.orNull?.asFile?.exists() ?: false
         }
     }
 
     fun fromArtifact(artifact: LatexArtifact) {
-        aux.set(artifact.aux.asFile)
-        bib.set(artifact.bib.asFile)
-        bbl.set(artifact.bbl.asFile)
+        aux.set(artifact.aux)
+        bib.set(artifact.bib)
+        bbl.set(artifact.bbl)
     }
 
     /**
@@ -44,15 +41,17 @@ internal open class BibtexTask : Exec() {
      */
     @TaskAction
     override fun exec() {
-        val aux = aux.get()
+        val aux = aux.get().asFile
         if (!aux.exists()) {
-            throw GradleException("${aux.absolutePath} does not exist, cannot invoke ${extension.bibTexCommand.get()}")
+            throw GradleException("${aux.absolutePath} does not exist, cannot invoke BibTeX")
         }
         if (Files.lines(aux.toPath()).anyMatch { it.contains("""\citation""") }) {
-            commandLine(extension.bibTexCommand.get(), aux.path)
+            executable = bibtexCommand.get()
+            args(aux.path)
+            args
             super.exec()
         } else {
-            Latex.LOG.warn("No citation in ${aux.absolutePath}, bibtex not invoked.")
+            Latex.LOG.warn("No citation in ${aux.absolutePath}, BibTeX not invoked.")
         }
     }
 

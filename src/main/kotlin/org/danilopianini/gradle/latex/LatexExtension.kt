@@ -2,7 +2,7 @@ package org.danilopianini.gradle.latex
 
 import org.danilopianini.gradle.latex.task.BibtexTask
 import org.danilopianini.gradle.latex.task.ConvertImagesTask
-import org.danilopianini.gradle.latex.task.PdfLatexTask
+import org.danilopianini.gradle.latex.task.PdflatexTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -23,7 +23,6 @@ open class LatexExtension @JvmOverloads constructor(
      * After adding extension, can be accessed via project.latex.utils
      */
     val quiet: Property<Boolean> = project.propertyWithDefault { true },
-    val terminalEmulator: Property<String> = project.propertyWithDefault { "bash" },
     val waitTime: Property<Long> = project.propertyWithDefault { 1L },
     val waitUnit: Property<TimeUnit> = project.propertyWithDefault { TimeUnit.MINUTES },
     val pdfLatexCommand: Property<String> = project.propertyWithDefault { "pdflatex" },
@@ -48,8 +47,8 @@ open class LatexExtension @JvmOverloads constructor(
                     task.fromArtifact(artifact)
                 }
 
-            val pdfLatexPreBibtex: TaskProvider<PdfLatexTask> =
-                project.tasks.register("pdflatexPreBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
+            val pdflatexPreBibtex: TaskProvider<PdflatexTask> =
+                project.tasks.register("pdflatexPreBibtex${artifact.taskSuffix}", PdflatexTask::class.java) { task ->
                     task.fromArtifact(artifact)
                     task.dependsOn(convertImages)
                 }
@@ -63,11 +62,11 @@ open class LatexExtension @JvmOverloads constructor(
                     artifact.bib.isPresent
                 }
 
-                task.dependsOn(pdfLatexPreBibtex)
+                    task.dependsOn(pdflatexPreBibtex)
             }
 
-            val pdfLatex: TaskProvider<PdfLatexTask> =
-                project.tasks.register("pdflatexAfterBibtex${artifact.taskSuffix}", PdfLatexTask::class.java) { task ->
+            val pdflatex: TaskProvider<PdflatexTask> =
+                project.tasks.register("pdflatexAfterBibtex${artifact.taskSuffix}", PdflatexTask::class.java) { task ->
                     task.fromArtifact(artifact)
                     task.dependsOn(convertImages)
                     if (artifact.hasBib) {
@@ -79,10 +78,10 @@ open class LatexExtension @JvmOverloads constructor(
                 task.group = Latex.TASK_GROUP
                 task.description = "Builds the ${artifact.name} LaTeX artifact."
 
-                task.dependsOn(pdfLatex)
+                task.dependsOn(pdflatex)
             }
 
-            val tasks: Set<TaskProvider<out Task>> = setOf(convertImages, pdfLatexPreBibtex, bibTexTask, pdfLatex, run)
+            val tasks: Set<TaskProvider<out Task>> = setOf(convertImages, pdflatexPreBibtex, bibTexTask, pdflatex, run)
             val dependsOnTasks = artifact.dependsOn.get().map { project.tasks.named("buildLatex${it.taskSuffix}") }
             // All tasks of this artifact should depend on the artifact's dependencies' tasks.
             tasks.forEach { provider ->
