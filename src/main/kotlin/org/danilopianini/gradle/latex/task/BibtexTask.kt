@@ -2,11 +2,14 @@ package org.danilopianini.gradle.latex.task
 
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
+import org.danilopianini.gradle.latex.configuration.BibtexTaskConfiguration
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.*
-import java.nio.file.Files
 
-open class BibtexTask : Exec(), BibtexConfiguration {
+open class BibtexTask : Exec(), BibtexTaskConfiguration {
+
+    @get:Input
+    final override val bibtexCommand = project.objects.property(String::class.java)
 
     @get:InputFile
     final override val aux = project.objects.fileProperty()
@@ -18,9 +21,6 @@ open class BibtexTask : Exec(), BibtexConfiguration {
     @get:OutputFile
     final override val bbl = project.objects.fileProperty()
 
-    @get:Input
-    final override val bibtexCommand = latexExtension.bibTexCommand
-
     init {
         group = Latex.TASK_GROUP
         description = "Uses BibTex to compile ${aux.get()} into ${bbl.get()}"
@@ -31,6 +31,7 @@ open class BibtexTask : Exec(), BibtexConfiguration {
     }
 
     fun fromArtifact(artifact: LatexArtifact) {
+        bibtexCommand.set(artifact.bibtexCommand)
         aux.set(artifact.aux)
         bib.set(artifact.bib)
         bbl.set(artifact.bbl)
@@ -43,9 +44,14 @@ open class BibtexTask : Exec(), BibtexConfiguration {
     override fun exec() {
         val aux = aux.get().asFile
         if (!aux.exists()) {
-            throw GradleException("${aux.absolutePath} does not exist, cannot invoke BibTeX")
+            throw GradleException("${aux.absolutePath} does not exist, cannot invoke ${bibtexCommand.get()}.")
         }
-        if (Files.lines(aux.toPath()).anyMatch { it.contains("""\citation""") }) {
+        val containsCitations = aux.useLines { lines ->
+            lines.any { line ->
+                line.contains("""\citation""")
+            }
+        }
+        if (containsCitations) {
             executable = bibtexCommand.get()
             args(aux.path)
             args
@@ -54,5 +60,4 @@ open class BibtexTask : Exec(), BibtexConfiguration {
             Latex.LOG.warn("No citation in ${aux.absolutePath}, BibTeX not invoked.")
         }
     }
-
 }

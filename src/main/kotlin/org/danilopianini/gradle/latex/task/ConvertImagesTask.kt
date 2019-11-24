@@ -2,18 +2,20 @@ package org.danilopianini.gradle.latex.task
 
 import org.danilopianini.gradle.latex.Latex
 import org.danilopianini.gradle.latex.LatexArtifact
+import org.danilopianini.gradle.latex.configuration.ConvertImagesTaskConfiguration
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
-open class ConvertImagesTask : DefaultTask(), ConvertImagesConfiguration {
+open class ConvertImagesTask : DefaultTask(),
+    ConvertImagesTaskConfiguration {
+
+    @get:Input
+    final override val inkscapeCommand = project.objects.property(String::class.java)
 
     @get:InputFiles
     final override val images = project.objects.fileCollection()
-
-    @get:Input
-    final override val inkscapeCommand = latexExtension.inkscapeCommand
 
     init {
         group = Latex.TASK_GROUP
@@ -21,7 +23,8 @@ open class ConvertImagesTask : DefaultTask(), ConvertImagesConfiguration {
     }
 
     fun fromArtifact(artifact: LatexArtifact) {
-        images.from(artifact.imageFiles)
+        inkscapeCommand.set(artifact.inkscapeCommand)
+        images.setFrom(artifact.images)
     }
 
     @TaskAction
