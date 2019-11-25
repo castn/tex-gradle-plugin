@@ -2,10 +2,11 @@ plugins {
   id("org.danilopianini.gradle-latex")
 }
 latex {
-    "cas-sc-template" {
-        bib = "cas-refs.bib"
+    register("cas-sc-template") {
+        bib.set(file("cas-refs.bib"))
     }
-    "cas-dc-template" {
-        bib = "cas-refs.bib"
+    register("cas-dc-template") {
+        bib.set(file("cas-refs.bib"))
     }
+    register("doc/elsdoc-cas")
 }
