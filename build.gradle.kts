@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-gradle-plugin`
     kotlin("jvm") version "1.3.50"
-    `maven-publish`
     id("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
     id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jetbrains.dokka") version "0.10.0"
@@ -16,7 +15,7 @@ gitSemVer {
     version = computeGitSemVer()
 }
 
-group = "org.danilopianini"
+group = "dev.reimer"
 
 repositories {
     mavenCentral()
@@ -24,7 +23,6 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(gradleApi())
     implementation(gradleKotlinDsl())
     testImplementation(gradleTestKit())
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
@@ -57,35 +55,19 @@ tasks {
     }
 }
 
-publishing {
-    publications {
-        withType<MavenPublication>() {
-            pom {
-                developers {
-                    developer {
-                        name.set("Danilo Pianini")
-                        email.set("danilo.pianini@gmail.com")
-                        url.set("http://www.danilopianini.org/")
-                    }
-                }
-            }
-        }
-    }
-}
-
 pluginBundle {
-    website = "https://github.com/DanySK/gradle-latex"
-    vcsUrl = "https://github.com/DanySK/gradle-latex"
+    website = "https://github.com/reimersoftware/latex-gradle-plugin"
+    vcsUrl = "https://github.com/reimersoftware/latex-gradle-plugin.git"
     tags = listOf("maven", "maven central", "ossrh", "central", "publish")
 }
 
 gradlePlugin {
     plugins {
-        create("GradleLatex") {
+        create(name) {
             id = "$group.$name"
-            displayName = "Gradle Latex Plugin"
-            description = "A plugin for compiling LaTeX, inspired by https://github.com/csabasulyok/gradle-latex"
-            implementationClass = "org.danilopianini.gradle.latex.Latex"
+            displayName = "LaTeX Gradle Plugin"
+            description = "A plugin for compiling LaTeX."
+            implementationClass = "dev.reimer.latex.gradle.plugin.Latex"
         }
     }
 }

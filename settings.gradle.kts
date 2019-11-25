@@ -1,2 +1,1 @@
-rootProject.name = "gradle-latex"
-
+rootProject.name = "latex-gradle-plugin"
