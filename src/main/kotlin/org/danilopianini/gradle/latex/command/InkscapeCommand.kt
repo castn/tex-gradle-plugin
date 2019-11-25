@@ -9,5 +9,6 @@ object InkscapeCommand : ConvertImagesCommand {
     override fun execute(action: ExecAction, configuration: ConvertImagesConfiguration) {
         action.executable = inkscape
         TODO("not implemented")
+        action.execute()
     }
 }

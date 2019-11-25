@@ -15,12 +15,12 @@ class LatexTests : StringSpec({
     val elsevierCasConfig = Test(
         directory = getResourceFile("${test}elsevier-cas"),
         configuration = Configuration(
-            tasks = listOf("buildLatex"),
+            tasks = listOf("latex"),
             options = listOf("--rerun-tasks")
         ),
         expectation = Expectation(
             file_exists = listOf("cas-dc-template.pdf", "cas-sc-template.pdf", "doc/elsdoc-cas.pdf"),
-            success = listOf("buildLatex", "bibtex.cas-dc-template", "bibtex.cas-sc-template"),
+            success = listOf("latex", "bibliographyCasDcTemplate", "bibliographyCasScTemplate"),
             failure = emptyList()
         ),
         description = "Elsevier Latex Template should build"
@@ -28,12 +28,12 @@ class LatexTests : StringSpec({
     val latexGuideConfig = Test(
         directory = getResourceFile("${test}latex-guide"),
         configuration = Configuration(
-            tasks = listOf("buildLatex"),
+            tasks = listOf("latex"),
             options = listOf("--rerun-tasks")
         ),
         expectation = Expectation(
             file_exists = listOf("latex.pdf"),
-            success = listOf("buildLatex", "pdfLatex.latex"),
+            success = listOf("latex", "pdfLatex"),
             failure = emptyList()
         ),
         description = "latex guide by M. Gates should build"
@@ -49,7 +49,7 @@ class LatexTests : StringSpec({
                 val result = GradleRunner.create()
                     .withProjectDir(root)
                     .withPluginClasspath()
-                    .withArguments(test.configuration.tasks + test.configuration.options + "--rerun-tasks")
+                    .withArguments(test.configuration.tasks + test.configuration.options + "--rerun-tasks" + "--stacktrace")
                     .build()
                 println(result.tasks)
                 println(result.output)

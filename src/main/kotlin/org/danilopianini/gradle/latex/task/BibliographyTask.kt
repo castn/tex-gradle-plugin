@@ -28,10 +28,10 @@ open class BibliographyTask : Exec(), BibliographyConfiguration {
     @get:OutputFile
     final override val bbl: RegularFileProperty = project.objects.fileProperty()
 
-    init {
-        group = Latex.TASK_GROUP
-        description = "Uses BibTex to compile ${aux.get()} into ${bbl.get()}"
+    override fun getGroup() = Latex.TASK_GROUP
+    override fun getDescription() = "Uses BibTex to compile ${aux.get()} into ${bbl.get()}"
 
+    init {
         onlyIf {
             bib.orNull?.asFile?.exists() ?: false
         }

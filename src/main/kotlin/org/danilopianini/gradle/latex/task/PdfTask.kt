@@ -24,10 +24,8 @@ open class PdfTask : Exec(), PdfConfiguration {
     @get:OutputFile
     final override val pdf: RegularFileProperty = project.objects.fileProperty()
 
-    init {
-        group = Latex.TASK_GROUP
-        description = "Uses pdfLaTeX to compile ${tex.get()} into ${pdf.get()}"
-    }
+    override fun getGroup() = Latex.TASK_GROUP
+    override fun getDescription() = "Uses pdfLaTeX to compile ${tex.get()} into ${pdf.get()}"
 
     fun fromArtifact(artifact: LatexArtifact) {
         pdfCommand.set(artifact.pdfCommand)

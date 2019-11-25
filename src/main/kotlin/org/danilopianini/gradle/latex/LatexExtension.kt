@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.get
 
 /**
  * Gradle extension to create new dynamic tasks & maintain and manage latex artifacts.
@@ -26,70 +27,84 @@ open class LatexExtension(
 
     override val bibliographyCommand: Property<BibliographyCommand> = project.propertyWithDefault { BibtexCommand }
 
-    override val convertImagesCommand: Property<ConvertImagesCommand> = project.propertyWithDefault { InkscapeCommand }
+    override val convertImagesCommand: Property<ConvertImagesCommand> =
+        project.propertyWithDefault { NopConvertImagesCommand }
 
     override val quiet: Property<Boolean> = project.propertyWithDefault { true }
 
-    private val runAll = project.tasks.register("buildLatex") { task ->
+    private val buildAllTask = project.tasks.register("latex") { task ->
         task.group = Latex.TASK_GROUP
         task.description = "Run all LaTeX tasks"
     }
 
     init {
-        configureEach { artifact ->
+        whenObjectAdded(::registerArtifactTasks)
+        whenObjectRemoved(::unregisterArtifactTasks)
+    }
 
-            val convertImages: TaskProvider<ConvertImagesTask> =
-                project.tasks.register(
-                    "convertImagesForPdflatex${artifact.taskSuffix}",
-                    ConvertImagesTask::class.java
-                ) { task ->
-                    task.fromArtifact(artifact)
-                }
+    private fun registerArtifactTasks(artifact: LatexArtifact) {
+        val taskNames = artifact.taskNames
 
-            val pdflatexPreBibtex: TaskProvider<PdfTask> =
-                project.tasks.register("pdflatexPreBibtex${artifact.taskSuffix}", PdfTask::class.java) { task ->
-                    task.fromArtifact(artifact)
-                    task.dependsOn(convertImages)
-                }
+        val convertImagesTask: TaskProvider<ConvertImagesTask> =
+            project.tasks.register(taskNames.convertImages, ConvertImagesTask::class.java) { task ->
+                task.fromArtifact(artifact)
+            }
 
-            val bibTexTask: TaskProvider<BibliographyTask> =
-                project.tasks.register("bibtex${artifact.taskSuffix}", BibliographyTask::class.java) { task ->
-                    task.fromArtifact(artifact)
+        val pdfPreBibliographyTask: TaskProvider<PdfTask> =
+            project.tasks.register(taskNames.pdfPreBibliography, PdfTask::class.java) { task ->
+                task.fromArtifact(artifact)
+                task.dependsOn(convertImagesTask)
+            }
+
+        val bibliographyTask: TaskProvider<BibliographyTask> =
+            project.tasks.register(taskNames.bibliography, BibliographyTask::class.java) { task ->
+                task.fromArtifact(artifact)
 
                 // Skip executing this task, if no bibliography has been specified.
                 task.onlyIf {
                     artifact.bib.isPresent
                 }
 
-                    task.dependsOn(pdflatexPreBibtex)
+                task.dependsOn(pdfPreBibliographyTask)
             }
 
-            val pdflatex: TaskProvider<PdfTask> =
-                project.tasks.register("pdflatexAfterBibtex${artifact.taskSuffix}", PdfTask::class.java) { task ->
-                    task.fromArtifact(artifact)
-                    task.dependsOn(convertImages)
-                    if (artifact.hasBib) {
-                        task.dependsOn(bibTexTask)
-                    }
-                }
-
-            val run: TaskProvider<Task> = project.tasks.register("buildLatex${artifact.taskSuffix}") { task ->
-                task.group = Latex.TASK_GROUP
-                task.description = "Builds the ${artifact.name} LaTeX artifact."
-
-                task.dependsOn(pdflatex)
-            }
-
-            // All tasks of this artifact should depend on the artifact's dependencies' tasks.
-            val tasks: Set<TaskProvider<out Task>> = setOf(convertImages, pdflatexPreBibtex, bibTexTask, pdflatex, run)
-            val dependsOnTasks = artifact.dependsOn.get().map { project.tasks.named("buildLatex${it.taskSuffix}") }
-            tasks.forEach { provider ->
-                provider.configure { task ->
-                    task.dependsOn(dependsOnTasks)
+        val pdfTask: TaskProvider<PdfTask> =
+            project.tasks.register(taskNames.pdf, PdfTask::class.java) { task ->
+                task.fromArtifact(artifact)
+                task.dependsOn(convertImagesTask)
+                if (artifact.hasBib) {
+                    task.dependsOn(bibliographyTask)
                 }
             }
 
-            runAll.get().dependsOn(run)
+        val buildTask: TaskProvider<Task> = project.tasks.register(taskNames.build) { task ->
+            task.group = Latex.TASK_GROUP
+            task.description = "Builds the ${artifact.name} LaTeX artifact."
+
+            task.dependsOn(pdfTask)
+        }
+
+        // All tasks of this artifact should depend on the artifact's dependencies' tasks.
+        addTaskDependencies(taskNames.all, artifact.dependsOn.get().map { it.taskNames.build })
+
+        buildAllTask.get().dependsOn(buildTask)
+    }
+
+    private fun unregisterArtifactTasks(artifact: LatexArtifact) {
+        artifact.taskNames.all.forEach { name ->
+            val task = project.tasks[name]
+            project.tasks.remove(task)
+        }
+    }
+
+    private fun addTaskDependencies(taskNames: Iterable<String>, dependencyTaskNames: Iterable<String>) {
+        val dependencyTasks = dependencyTaskNames.map { name ->
+            project.tasks.named(name)
+        }
+        taskNames.forEach { name ->
+            project.tasks.named(name) { task ->
+                task.dependsOn(dependencyTasks)
+            }
         }
     }
 }

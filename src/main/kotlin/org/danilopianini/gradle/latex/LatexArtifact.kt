@@ -68,10 +68,7 @@ class LatexArtifact internal constructor(
 
     internal val hasBib get() = bib.isPresent
 
-    internal val taskSuffix = name
-        .removeSuffix(".tex")
-        .split(File.pathSeparatorChar, '-', '.')
-        .joinToString("", transform = String::capitalize)
+    internal val taskNames = LatexArtifactTaskNames(this)
 
     private val latexExtension: LatexExtension
         get() = project.extensions[Latex.EXTENSION_NAME] as LatexExtension
