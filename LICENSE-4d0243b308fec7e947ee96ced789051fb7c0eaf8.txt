@@ -1,3 +1,5 @@
+This file contains the license for Danilo Pianini's code until commit 4d0243b308fec7e947ee96ced789051fb7c0eaf8:
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
