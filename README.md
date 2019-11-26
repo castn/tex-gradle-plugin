@@ -1,18 +1,12 @@
-# gradle-latex
-A Gradle plugin for building LaTeX projects
+# latex-gradle-plugin
 
-## Rationale
-I wanted something to smootly build latex in CI without having to fiddle with bash
+A Gradle plugin for building LaTeX projects.
 
 ## Usage
 
 ### Importing the plugin
 
-```kotlin
-plugins {
-    id ("org.danilopianini.gradle-latex") version "0.1.0" // Exemplificatory, pick the last stable one!
-}
-```
+TODO
 
 ### Configuring the plugin
 
@@ -20,7 +14,7 @@ plugins {
 
 ```kotlin
 latex {
-    "myMainLatexFile"()
+    register("myMainLatexFile")
 }
 ```
 
@@ -31,17 +25,14 @@ present, and builds the resulting `myMainLatexFile.pdf`.
 
 ```kotlin
 latex {
-    "oneFile"()
-    "anotherFile"()
+    register("oneFile")
+    register("anotherFile")
+    register("subDir/anotherFile")
 }
 ```
 
-You can have one entry in the latex section of your `build.gradle.kts` per project you want to build.
-In case your files are spread across multiple directories,
-consider each sub-directory a subproject and configure Gradle accordingly.
-
-See for instance the [example with Elsevier's CAS LaTeX template](https://github.com/DanySK/gradle-latex/tree/master/src/test/resources/org/danilopianini/gradle/latex/test/elsevier-cas),
-in particular look at `settings.gradle.kts` and `build.gradle.kts` both in the root and in the `doc` folder
+You can register multiple artifacts from the `latex` extension.
+In case your files are in a sub-directory, specify the path to the source files.
 
 #### Configuration options
 
@@ -51,17 +42,7 @@ The following examples shows the available options and their default values.
 
 ```kotlin
 latex {
-    quiet.set(true)
-    terminalEmulator.set("bash") // Your terminal
-    waitTime.set(1) // How long before considering a process stalled
-    waitUnit.set(TimeUnit.MINUTES) // Time unit for the number above
-    pdfLatexCommand.set("pdflatex")
-    bibTexCommand.set("bibtex")
-    "myMainLatexFile" {
-        dependsOn = emptyList<LatexArtifact>()
-        extraArguments = listOf("-shell-escape", "-synctex=1", "-interaction=nonstopmode", "-halt-on-error")
-        quiet = null // Inherits global setting
-    }
+    // TODO
 }
 ```
 
@@ -73,18 +54,11 @@ while project3 build can start only after both the former completed successfully
 
 ```kotlin
 latex {
-    val project1 = "project1"()
-    val project2 = "project2"()
-    "project3" {
-        dependsOn = setOf(project1, project2)
+    val project1 = register("project1")
+    val project2 = register("project2")
+    register("project3") {
+        dependsOn.add(project1)
+        dependsOn.add(project2)
     }
 }
 ```
-
-## Contributing to the project
-
-I gladly review pull requests and I'm happy to improve the work.
-If the software was useful to you, please consider supporting my development activity
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=5P4DSZE5DV4H2&currency_code=EUR)
-
-

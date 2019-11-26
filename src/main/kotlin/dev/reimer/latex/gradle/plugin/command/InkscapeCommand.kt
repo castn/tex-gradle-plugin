@@ -1,14 +1,13 @@
 package dev.reimer.latex.gradle.plugin.command
 
-import dev.reimer.latex.gradle.plugin.configuration.ConvertImagesConfiguration
-import org.gradle.process.internal.ExecAction
+import dev.reimer.latex.gradle.plugin.configuration.LatexTaskConfiguration
+import org.gradle.process.ExecSpec
 
-object InkscapeCommand : ConvertImagesCommand {
-    private const val inkscape = "inkscape"
+object InkscapeCommand : Command {
 
-    override fun execute(action: ExecAction, configuration: ConvertImagesConfiguration) {
-        action.executable = inkscape
+    override fun ExecSpec.configure(configuration: LatexTaskConfiguration): Boolean {
+        executable = "inkscape"
         TODO("not implemented")
-        action.execute()
+        return true
     }
 }

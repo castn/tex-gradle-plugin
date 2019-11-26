@@ -8,14 +8,14 @@ import org.slf4j.LoggerFactory
 /**
  * A Plugin configuring the project for publishing on Maven Central
  */
-class Latex : Plugin<Project> {
+class LatexPlugin : Plugin<Project> {
     companion object {
         /**
          * The name of the publication to be created.
          */
         const val TASK_GROUP = "LaTeX"
         const val EXTENSION_NAME = "latex"
-        val LOG: Logger = LoggerFactory.getLogger(Latex::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(LatexPlugin::class.java)
     }
 
     override fun apply(project: Project) {

@@ -24,7 +24,6 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(gradleKotlinDsl())
-    testImplementation(gradleTestKit())
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 }
 
@@ -64,10 +63,10 @@ pluginBundle {
 gradlePlugin {
     plugins {
         create(name) {
-            id = "$group.$name"
+            id = "dev.reimer.latex-gradle-plugin"
             displayName = "LaTeX Gradle Plugin"
             description = "A plugin for compiling LaTeX."
-            implementationClass = "dev.reimer.latex.gradle.plugin.Latex"
+            implementationClass = "dev.reimer.latex.gradle.plugin.LatexPlugin"
         }
     }
 }

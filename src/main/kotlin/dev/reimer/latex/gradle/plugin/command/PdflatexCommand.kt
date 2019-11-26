@@ -1,19 +1,20 @@
 package dev.reimer.latex.gradle.plugin.command
 
-import dev.reimer.latex.gradle.plugin.configuration.PdfConfiguration
-import org.gradle.process.internal.ExecAction
+import dev.reimer.latex.gradle.plugin.configuration.LatexTaskConfiguration
+import org.gradle.process.ExecSpec
 
-object PdflatexCommand : PdfCommand {
-    private const val pdflatex = "pdflatex"
+object PdflatexCommand : Command {
 
-    override fun execute(action: ExecAction, configuration: PdfConfiguration) {
-        action.executable = pdflatex
-        if (configuration.quiet.get()) {
-            action.args("-quiet")
-        }
-        action.args("-shell-escape", "-synctex=1", "-interaction=nonstopmode", "-halt-on-error")
-        action.args(configuration.tex.get().asFile.absolutePath)
-        action.execute()
-        action.execute()
+    override fun ExecSpec.configure(configuration: LatexTaskConfiguration): Boolean {
+        executable = "pdflatex"
+        if (configuration.quiet.get()) args("-quiet")
+        // Halt immediately on errors.
+        args("-halt-on-error", "-interaction=nonstopmode")
+        args("-job-name=${configuration.jobName.get()}")
+        args("-output-directory=${configuration.outputDirectory.get()}")
+        args("-aux-directory=${configuration.auxDirectory.get()}")
+        args("-synctex=1", "-time-statistics")
+        args(configuration.tex.get().asFile.absolutePath)
+        return true
     }
 }

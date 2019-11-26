@@ -10,37 +10,17 @@ import org.slf4j.LoggerFactory
 
 class LatexTests : StringSpec({
 
-    val elsevierCasConfig = Test(
-        directory = getResourceFile("elsevier-cas"),
-        configuration = Configuration(
-            tasks = listOf("latex"),
-            options = listOf("--rerun-tasks")
-        ),
-        expectation = Expectation(
-            file_exists = listOf("cas-dc-template.pdf", "cas-sc-template.pdf", "doc/elsdoc-cas.pdf"),
-            success = listOf("latex", "bibliographyCasDcTemplate", "bibliographyCasScTemplate"),
-            failure = emptyList()
-        ),
-        description = "Elsevier Latex Template should build"
-    )
-    val latexGuideConfig = Test(
-        directory = getResourceFile("latex-guide"),
-        configuration = Configuration(
-            tasks = listOf("latex"),
-            options = listOf("--rerun-tasks")
-        ),
-        expectation = Expectation(
-            file_exists = listOf("latex.pdf"),
-            success = listOf("latex", "pdfLatex"),
-            failure = emptyList()
-        ),
-        description = "latex guide by M. Gates should build"
-    )
-    val configs = setOf(elsevierCasConfig, latexGuideConfig)
+    val configs = setOf(ElsevierTest, LatexGuideTest)
     configs.forEach { test ->
         log.debug("Test to be executed: $test from ${test.directory}")
-        val testFolder = temporaryFolder {
+
+        temporaryFolder {
+            // Copy sample dir.
             test.directory.copyRecursively(root)
+
+            // Create build file.
+            newFile("build.gradle.kts").writeText(test.buildFile)
+
             log.debug("Test has been copied into $root and is ready to get executed")
 
             test.description {
