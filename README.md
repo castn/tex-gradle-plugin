@@ -82,6 +82,7 @@ latex {
     quiet.set(true)
     overwrite.set(true)
     auxDirectory.set(file("auxil"))
+    outputDirectory.set(file("out"))
     pdfCommand.set(PdflatexCommand)
     bibliographyCommand.set(BibtexCommand)
     convertImagesCommand.set(InkscapeCommand)
@@ -97,6 +98,7 @@ latex {
     quiet = true
     overwrite = true
     auxDirectory = file("auxil")
+    outputDirectory = file("out")
     pdfCommand = PdflatexCommand.INSTANCE
     bibliographyCommand = BibtexCommand.INSTANCE
     convertImagesCommand = InkscapeCommand.INSTANCE
