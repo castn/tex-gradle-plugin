@@ -1,3 +1,6 @@
 [submodule "src/test/resources/latex-quick-reference"]
 	path = src/test/resources/latex-quick-reference
 	url = https://github.com/heinrichreimer/latex-quick-reference.git
+[submodule "src/test/resources/latex-els-cas-template"]
+	path = src/test/resources/latex-els-cas-template
+	url = https://github.com/heinrichreimer/latex-els-cas-templates.git

@@ -1,7 +1,7 @@
 package dev.reimer.latex.gradle.plugin
 
 object ElsevierTest : Test {
-    override val directory = getResourceFile("elsevier-cas")
+    override val directory = getResourceFile("latex-els-cas-template")
     override val configuration = Configuration(
         tasks = listOf("latex"),
         options = listOf("--rerun-tasks")
@@ -11,7 +11,7 @@ object ElsevierTest : Test {
         success = listOf("latex", "latexCasScTemplate", "latexCasDcTemplate", "latexDocElsdocCas"),
         failure = emptyList()
     )
-    override val description = "Elsevier LaTeX Template should build."
+    override val description = "Elsevier LaTeX template should build."
     override val buildFile = """
         import dev.reimer.latex.gradle.plugin.task.LatexTask
 
