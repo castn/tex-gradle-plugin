@@ -2,7 +2,7 @@ package dev.reimer.latex.gradle.plugin
 
 object LatexGuideTest : Test {
 
-    override val directory = getResourceFile("latex-guide")
+    override val directory = getResourceFile("latex-quick-reference")
     override val configuration = Configuration(
         tasks = listOf("latex"),
         options = listOf("--rerun-tasks")
@@ -12,7 +12,7 @@ object LatexGuideTest : Test {
         success = listOf("latex", "latexGuide"),
         failure = emptyList()
     )
-    override val description = "LaTeX guide by Mark Gates should build."
+    override val description = "LaTeX quick reference by Mark Gates should build."
     override val buildFile = """
         import dev.reimer.latex.gradle.plugin.task.LatexTask
         
