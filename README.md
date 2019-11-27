@@ -97,7 +97,7 @@ latex {
 ## Fork
 
 This repo is forked from [@DanySK's gradle-latex](https://github.com/DanySK/gradle-latex) project.
-His project's code (until commit 4d0243b308fec7e947ee96ced789051fb7c0eaf8) 
+His project's code (until commit `4d0243b`) 
 is licensed under the [Apache License 2.0](https://github.com/DanySK/gradle-latex/blob/master/LICENSE).
 You may use [this library](.) under the terms of the [MIT License](LICENSE).
 
