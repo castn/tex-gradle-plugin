@@ -25,10 +25,6 @@ dependencies {
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_6
-}
-
 tasks {
     withType<Test> {
         useJUnitPlatform()
@@ -43,7 +39,7 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.6" // TODO Change to 1.8
+        kotlinOptions.jvmTarget = "1.8"
     }
 
     withType<DokkaTask> {
