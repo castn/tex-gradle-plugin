@@ -6,7 +6,38 @@ A Gradle plugin for building LaTeX projects.
 
 ### Importing the plugin
 
-TODO
+#### Gradle Dependency
+
+This library is available on [**jitpack.io**](https://jitpack.io/#dev.reimer/latex-gradle-plugin).  
+Add this in your `build.gradle.kts` or `build.gradle` file:
+
+<details open><summary>Kotlin</summary>
+
+```kotlin
+repositories {
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("dev.reimer:latex-gradle-plugin:<version>")
+}
+```
+
+</details>
+
+<details><summary>Groovy</summary>
+
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'dev.reimer:latex-gradle-plugin:<version>'
+}
+```
+
+</details>
 
 ### Configuring the plugin
 
