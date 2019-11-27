@@ -9,6 +9,7 @@ plugins {
     id("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
     id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jetbrains.dokka") version "0.10.0"
+    `maven-publish`
 }
 
 gitSemVer {
@@ -45,7 +46,7 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.6"
+        kotlinOptions.jvmTarget = "1.6" // TODO Change to 1.8
     }
 
     withType<DokkaTask> {
@@ -67,6 +68,14 @@ gradlePlugin {
             displayName = "LaTeX Gradle Plugin"
             description = "A plugin for compiling LaTeX."
             implementationClass = "dev.reimer.latex.gradle.plugin.LatexPlugin"
+        }
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
         }
     }
 }
