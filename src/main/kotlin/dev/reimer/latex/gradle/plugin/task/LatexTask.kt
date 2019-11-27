@@ -10,7 +10,6 @@ import dev.reimer.latex.gradle.plugin.internal.texDir
 import dev.reimer.latex.gradle.plugin.internal.texFile
 import dev.reimer.latex.gradle.plugin.internal.texNameWithoutExtension
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
@@ -18,13 +17,13 @@ import org.gradle.process.internal.ExecAction
 
 open class LatexTask : Exec(), LatexTaskConfiguration {
 
-    @get:Input
+    @get:Nested
     final override val bibliographyCommand = project.propertyWithDefault(latexExtension.bibliographyCommand)
 
-    @get:Input
+    @get:Nested
     final override val convertImagesCommand = project.propertyWithDefault(latexExtension.convertImagesCommand)
 
-    @get:Input
+    @get:Nested
     final override val pdfCommand = project.propertyWithDefault(latexExtension.pdfCommand)
 
     @get:Input
@@ -64,12 +63,15 @@ open class LatexTask : Exec(), LatexTaskConfiguration {
     final override val images: ConfigurableFileCollection = project.objects.fileCollection()
 
     @get:OutputFile
-    final override val pdf: RegularFileProperty =
+    final override val pdf =
         project.filePropertyWithDefault {
             project.file(texFile.withExtension(PDF))
         }
 
+    @Internal
     override fun getGroup() = LatexPlugin.TASK_GROUP
+
+    @Internal
     override fun getDescription() = "Builds the ${jobName.get()} LaTeX artifact."
 
     @TaskAction
