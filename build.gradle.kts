@@ -12,11 +12,8 @@ plugins {
     `maven-publish`
 }
 
-gitSemVer {
-    version = computeGitSemVer()
-}
-
 group = "dev.reimer"
+version = gitSemVer.computeGitSemVer()
 
 repositories {
     mavenCentral()
