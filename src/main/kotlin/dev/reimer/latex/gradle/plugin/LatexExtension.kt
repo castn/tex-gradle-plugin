@@ -8,8 +8,10 @@ import dev.reimer.latex.gradle.plugin.configuration.LatexExtensionConfiguration
 import dev.reimer.latex.gradle.plugin.task.LatexTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.InputFiles
 
 /**
  * Gradle extension to create new dynamic tasks & maintain and manage latex artifacts.
@@ -31,7 +33,12 @@ open class LatexExtension(
 
     override val overwrite: Property<Boolean> = project.propertyWithDefault { true }
 
+    override val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
+
     override val auxDirectory: DirectoryProperty = project.objects.directoryProperty()
+
+    @get:InputFiles
+    final override val images: ConfigurableFileCollection = project.objects.fileCollection()
 
     private val buildAllTask = project.tasks.register("latex") { task ->
         task.group = LatexPlugin.TASK_GROUP

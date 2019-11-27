@@ -11,9 +11,8 @@ object PdflatexCommand : Command {
         // Halt immediately on errors.
         args("-halt-on-error", "-interaction=nonstopmode")
         args("-job-name=${configuration.jobName.get()}")
-        args("-output-directory=${configuration.outputDirectory.get()}")
-        args("-aux-directory=${configuration.auxDirectory.get()}")
-        args("-synctex=1", "-time-statistics")
+        args("-output-directory=${configuration.outputDirectory.get().asFile.absolutePath}")
+        args("-aux-directory=${configuration.auxDirectory.get().asFile.absolutePath}")
         args(configuration.tex.get().asFile.absolutePath)
         return true
     }

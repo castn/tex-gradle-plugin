@@ -1,5 +1,6 @@
 package dev.reimer.latex.gradle.plugin
 
+import dev.reimer.latex.gradle.plugin.configuration.LatexExtensionConfiguration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.slf4j.Logger
@@ -20,7 +21,7 @@ class LatexPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create(
-            LatexExtension::class.java,
+            LatexExtensionConfiguration::class.java,
             EXTENSION_NAME,
             LatexExtension::class.java,
             project

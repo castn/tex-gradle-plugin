@@ -7,7 +7,7 @@ object ElsevierTest : Test {
         options = listOf("--rerun-tasks")
     )
     override val expectation = Expectation(
-        file_exists = listOf("cas-dc-template.pdf", "cas-sc-template.pdf", "doc/elsdoc-cas.pdf"),
+        file_exists = listOf("out/cas-dc-template.pdf", "out/cas-sc-template.pdf", "out/elsdoc-cas.pdf"),
         success = listOf("latex", "latexCasScTemplate", "latexCasDcTemplate", "latexDocElsdocCas"),
         failure = emptyList()
     )
@@ -21,6 +21,8 @@ object ElsevierTest : Test {
         
         latex {
             quiet.set(false)
+            outputDirectory.set(file("out"))
+            auxDirectory.set(file("auxil"))
         }
         
         tasks {

@@ -33,10 +33,12 @@ open class LatexTask : Exec(), LatexTaskConfiguration {
     final override val overwrite = project.propertyWithDefault(latexExtension.overwrite)
 
     @get:OutputDirectory
-    final override val outputDirectory = project.directoryPropertyWithDefault { texDir }
+    final override val outputDirectory = project.objects.directoryProperty()
+        .convention(project, latexExtension.outputDirectory, project.dirProvider { texDir })
 
     @get:OutputDirectory
-    final override val auxDirectory = project.directoryPropertyWithDefault(outputDirectory)
+    final override val auxDirectory = project.objects.directoryProperty()
+        .convention(project, latexExtension.auxDirectory, outputDirectory)
 
     @get:InputFile
     final override val tex =
@@ -61,6 +63,7 @@ open class LatexTask : Exec(), LatexTaskConfiguration {
 
     @get:InputFiles
     final override val images: ConfigurableFileCollection = project.objects.fileCollection()
+        .from(latexExtension.images)
 
     @get:OutputFile
     final override val pdf =

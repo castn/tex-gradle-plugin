@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -40,6 +41,32 @@ fun Project.directoryPropertyWithDefault(default: () -> File?): DirectoryPropert
 @Incubating
 fun Project.directoryPropertyWithDefault(default: Provider<Directory>): DirectoryProperty =
     objects.directoryProperty().convention(default)
+
+@Incubating
+fun Project.directoryPropertyWithDefault(
+    default: Provider<Directory>,
+    alternativeDefault: Provider<Directory>
+): DirectoryProperty =
+    objects.directoryProperty().convention(this, default, alternativeDefault)
+
+fun Project.fileProvider(file: () -> File?): Provider<RegularFile> = layout.file(provider(file))
+fun Project.dirProvider(file: () -> File?): Provider<Directory> = layout.dir(provider(file))
+
+fun DirectoryProperty.convention(
+    project: Project,
+    provider: Provider<out Directory>,
+    alternativeProvider: Provider<out Directory>
+): DirectoryProperty {
+    return convention(project.provider {
+        if (provider.isPresent) {
+            provider.get()
+        } else {
+            alternativeProvider.get()
+        }
+    })
+}
+
+fun <T> Project.provider(value: T): Provider<T> = provider { value }
 
 fun File.withExtension(extension: String): File {
     val newName = "$nameWithoutExtension.$extension"
