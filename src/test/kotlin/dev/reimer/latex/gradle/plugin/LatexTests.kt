@@ -24,6 +24,11 @@ class LatexTests : StringSpec({
             log.debug("Test has been copied into $root and is ready to get executed")
 
             test.description {
+                // Delete expected files before build.
+                test.expectation.file_exists.forEach {
+                    root.resolve(it).delete()
+                }
+
                 val result = GradleRunner.create()
                     .withProjectDir(root)
                     .withPluginClasspath()
@@ -39,7 +44,7 @@ class LatexTests : StringSpec({
                     task.outcome shouldBe TaskOutcome.SUCCESS
                 }
                 test.expectation.file_exists.forEach {
-                    with(root.resolve(it)) {
+                    root.resolve(it).apply {
                         shouldExist()
                         shouldBeAFile()
                     }
