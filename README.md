@@ -46,8 +46,8 @@ Build LaTeX files by registering tasks:
 <details open><summary>Kotlin</summary>
 
 ```kotlin
-task.register<LatexTask>("buildLatexFile") {
-    tex.set(file("sample.tex"))
+tasks.register<TexCompile>("buildLatexFile") {
+    source("sample.tex")
 }
 ```
 
@@ -56,20 +56,28 @@ task.register<LatexTask>("buildLatexFile") {
 <details><summary>Groovy</summary>
 
 ```groovy
-task buildLatexFile(type: LatexTask) {
-    tex = file("sample.tex")
+task buildLatexFile(type: TexCompile) {
+    source("sample.tex")
 }
 ```
 
 </details>
 
-(You may need to import [`LatexTask`](src/main/kotlin/dev/reimer/latex/gradle/plugin/task/LatexTask.kt))
+(You may need to import [`TexCompile`](src/main/kotlin/dev/reimer/tex/gradle/plugin/task/TexCompile.kt))
 
 This configuration autodetects if a `sample.bib` is present, 
 and builds the resulting `sample.pdf`.
+Compiled PDFs are stored in the `out/` directory under the project root.
+Setting the `destinationDir` property overwrites 
+the default output directory.
 
 You can register as many latex build tasks as you like.
-In case your files are in a sub-directory, specify the path to the source files.
+Alternatively, reference a directory, file tree 
+or [more](https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#files-java.lang.Object...-), 
+using the `source()` task configuration.
+
+And don't worry about a messy `out/` directory, 
+as the folder structure will be preserved.
 
 ### Options
 
@@ -81,10 +89,9 @@ Global options can be specified directly in the `latex` block.
 latex {
     quiet.set(true)
     overwrite.set(true)
-    auxDirectory.set(file("auxil"))
-    pdfCommand.set(PdflatexCommand)
-    bibliographyCommand.set(BibtexCommand)
-    convertImagesCommand.set(InkscapeCommand)
+    texCompiler.set(TexCompilerType.PDFLATEX)
+    bibliographyCompiler.set(BibliographyCompilerType.BIBTEX)
+    imageConverter.set(ImageConverterType.INKSCAPE_PDF)
 }
 ```
 
@@ -96,10 +103,9 @@ latex {
 latex {
     quiet = true
     overwrite = true
-    auxDirectory = file("auxil")
-    pdfCommand = PdflatexCommand.INSTANCE
-    bibliographyCommand = BibtexCommand.INSTANCE
-    convertImagesCommand = InkscapeCommand.INSTANCE
+    texCompiler = TexCompilerType.PDFLATEX
+    bibliographyCompiler = BibliographyCompilerType.BIBTEX
+    imageConverter = ImageConverterType.INKSCAPE_PDF
 }
 ```
 
@@ -116,14 +122,14 @@ while `project3.tex` build can start only after both the former completed succes
 <details open><summary>Kotlin</summary>
 
 ```kotlin
-task.register<LatexTask>("buildLatexProject1") {
-    tex.set(file("project1.tex"))
+tasks.register<LatexTask>("buildLatexProject1") {
+    source("project1/")
 }
-task.register<LatexTask>("buildLatexProject2") {
-    tex.set(file("project2.tex"))
+tasks.register<LatexTask>("buildLatexProject2") {
+    source("project2/")
 }
-task.register<LatexTask>("buildLatexProject3") {
-    tex.set(file("project3.tex"))
+tasks.register<LatexTask>("buildLatexProject3") {
+    source("project3/")
     dependsOn("buildLatexProject1", "buildLatexProject2")
 }
 ```
@@ -134,13 +140,13 @@ task.register<LatexTask>("buildLatexProject3") {
 
 ```groovy
 task buildLatexProject1(type: LatexTask) {
-    tex = file("project1.tex")
+    source("project1/")
 }
 task buildLatexProject2(type: LatexTask) {
-    tex = file("project2.tex")
+    source("project2/")
 }
 task buildLatexProject3(type: LatexTask) {
-    tex = file("project3.tex")
+    source("project3/")
     dependsOn buildLatexProject1, buildLatexProject2
 }
 ```
@@ -152,16 +158,10 @@ task buildLatexProject3(type: LatexTask) {
 When building and testing this library, make sure to clone the submodules.
 Those are LaTeX projects, used for integration tests.
 
-## Fork
-
-This repo is forked from [@DanySK's gradle-latex](https://github.com/DanySK/gradle-latex) project.
-His project's code (until commit `4d0243b`) 
-is licensed under the [Apache License 2.0](https://github.com/DanySK/gradle-latex/blob/master/LICENSE).
-You may use [this library](.) under the terms of the [MIT License](LICENSE).
-
 ## Thanks
 
-I am grateful to @DanySK for his work on the forked library, which was the base for this re-implementation.
+I am grateful to @DanySK for his work on the forked library, 
+which was licensed under the [Apache License 2.0](https://github.com/DanySK/gradle-latex/blob/master/LICENSE).
 
 ## Status α
 

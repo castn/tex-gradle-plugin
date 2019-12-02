@@ -57,10 +57,10 @@ pluginBundle {
 gradlePlugin {
     plugins {
         create(name) {
-            id = "dev.reimer.latex-gradle-plugin"
-            displayName = "LaTeX Gradle Plugin"
-            description = "A plugin for compiling LaTeX."
-            implementationClass = "dev.reimer.latex.gradle.plugin.LatexPlugin"
+            id = "dev.reimer.tex"
+            displayName = "TeX Gradle Plugin"
+            description = "A plugin for compiling TeX."
+            implementationClass = "dev.reimer.tex.gradle.plugin.TexPlugin"
         }
     }
 }
