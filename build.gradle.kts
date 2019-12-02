@@ -6,14 +6,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-gradle-plugin`
     kotlin("jvm") version "1.3.50"
-    id("org.danilopianini.git-sensitive-semantic-versioning") version "0.2.2"
     id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jetbrains.dokka") version "0.10.0"
     `maven-publish`
 }
 
 group = "dev.reimer"
-version = gitSemVer.computeGitSemVer()
+version = "0.3.0"
 
 repositories {
     mavenCentral()
