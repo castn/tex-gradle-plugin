@@ -9,7 +9,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class LatexTests : StringSpec({
+class TexTests : StringSpec({
 
     val configs = setOf(ElsevierTest, LatexGuideTest)
     configs.forEach { test ->
@@ -55,6 +55,6 @@ class LatexTests : StringSpec({
         }
 }) {
     companion object {
-        val log: Logger = LoggerFactory.getLogger(LatexTests::class.java)
+        val log: Logger = LoggerFactory.getLogger(TexTests::class.java)
     }
 }

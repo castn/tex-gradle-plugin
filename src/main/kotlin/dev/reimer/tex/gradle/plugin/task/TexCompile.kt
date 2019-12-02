@@ -92,14 +92,14 @@ open class TexCompile : FilteredSourceTask() {
     }
 
     private fun compileSingle(texFile: File, path: RelativePath) {
-        compileLatex(texFile, path)
+        compileTex(texFile, path)
         if (compileBibliography(texFile, path)) {
-            compileLatex(texFile, path)
+            compileTex(texFile, path)
         }
-        compileLatex(texFile, path)
+        compileTex(texFile, path)
     }
 
-    private fun compileLatex(texFile: File, path: RelativePath) {
+    private fun compileTex(texFile: File, path: RelativePath) {
         val destinationDirFile = destinationDirFile
         val destinationDir: File = if (destinationDirFile != null) {
             destinationDirFile.resolve(path.pathString).parentFile

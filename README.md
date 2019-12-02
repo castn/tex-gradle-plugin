@@ -1,12 +1,12 @@
-[![](https://jitpack.io/v/dev.reimer/latex-gradle-plugin.svg)](https://jitpack.io/#dev.reimer/latex-gradle-plugin)
+[![](https://jitpack.io/v/dev.reimer/tex-gradle-plugin.svg)](https://jitpack.io/#dev.reimer/tex-gradle-plugin)
 
-# latex-gradle-plugin<sup>[α](#status-α)</sup>
+# tex-gradle-plugin<sup>[α](#status-α)</sup>
 
-A Gradle plugin for building LaTeX projects.
+A Gradle plugin for building TeX/LaTeX projects.
 
 ## Gradle Dependency
 
-This library is available on [**jitpack.io**](https://jitpack.io/#dev.reimer/latex-gradle-plugin).  
+This library is available on [**jitpack.io**](https://jitpack.io/#dev.reimer/tex-gradle-plugin).  
 Add this in your `build.gradle.kts` or `build.gradle` file:
 
 <details open><summary>Kotlin</summary>
@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.reimer:latex-gradle-plugin:<version>")
+    implementation("dev.reimer:tex-gradle-plugin:<version>")
 }
 ```
 
@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.reimer:latex-gradle-plugin:<version>'
+    implementation 'dev.reimer:tex-gradle-plugin:<version>'
 }
 ```
 
@@ -41,12 +41,12 @@ dependencies {
 
 ### Configuring builds
 
-Build LaTeX files by registering tasks:
+Build TeX files by registering tasks:
 
 <details open><summary>Kotlin</summary>
 
 ```kotlin
-tasks.register<TexCompile>("buildLatexFile") {
+tasks.register<TexCompile>("buildTexFile") {
     source("sample.tex")
 }
 ```
@@ -56,7 +56,7 @@ tasks.register<TexCompile>("buildLatexFile") {
 <details><summary>Groovy</summary>
 
 ```groovy
-task buildLatexFile(type: TexCompile) {
+task buildTexFile(type: TexCompile) {
     source("sample.tex")
 }
 ```
@@ -71,7 +71,7 @@ Compiled PDFs are stored in the `out/` directory under the project root.
 Setting the `destinationDir` property overwrites 
 the default output directory.
 
-You can register as many latex build tasks as you like.
+You can register as many tex compile tasks as you like.
 Alternatively, reference a directory, file tree 
 or [more](https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#files-java.lang.Object...-), 
 using the `source()` task configuration.
@@ -81,12 +81,12 @@ as the folder structure will be preserved.
 
 ### Options
 
-Global options can be specified directly in the `latex` block.
+Global options can be specified directly in the `tex` block.
 
 <details open><summary>Kotlin</summary>
 
 ```kotlin
-latex {
+tex {
     quiet.set(true)
     overwrite.set(true)
     texCompiler.set(TexCompilerType.PDFLATEX)
@@ -100,7 +100,7 @@ latex {
 <details><summary>Groovy</summary>
 
 ```groovy
-latex {
+tex {
     quiet = true
     overwrite = true
     texCompiler = TexCompilerType.PDFLATEX
@@ -115,22 +115,22 @@ All options can also be applied to each task individually.
 
 ### Building multiple projects in order
 
-Task dependencies (`dependsOn`) can be used to specify dependencies among LaTeX tasks.
+Task dependencies (`dependsOn`) can be used to specify dependencies among TeX tasks.
 In the following example, `project1.tex` and `project2.tex` can get built in parallel,
 while `project3.tex` build can start only after both the former completed successfully.
 
 <details open><summary>Kotlin</summary>
 
 ```kotlin
-tasks.register<LatexTask>("buildLatexProject1") {
+tasks.register<TexCompile>("buildTexProject1") {
     source("project1/")
 }
-tasks.register<LatexTask>("buildLatexProject2") {
+tasks.register<TexCompile>("buildTexProject2") {
     source("project2/")
 }
-tasks.register<LatexTask>("buildLatexProject3") {
+tasks.register<TexCompile>("buildTexProject3") {
     source("project3/")
-    dependsOn("buildLatexProject1", "buildLatexProject2")
+    dependsOn("buildTexProject1", "buildTexProject2")
 }
 ```
 
@@ -139,15 +139,15 @@ tasks.register<LatexTask>("buildLatexProject3") {
 <details><summary>Groovy</summary>
 
 ```groovy
-task buildLatexProject1(type: LatexTask) {
+task buildTexProject1(type: TexCompile) {
     source("project1/")
 }
-task buildLatexProject2(type: LatexTask) {
+task buildTexProject2(type: TexCompile) {
     source("project2/")
 }
-task buildLatexProject3(type: LatexTask) {
+task buildTexProject3(type: TexCompile) {
     source("project3/")
-    dependsOn buildLatexProject1, buildLatexProject2
+    dependsOn buildTexProject1, buildTexProject2
 }
 ```
 
@@ -156,7 +156,7 @@ task buildLatexProject3(type: LatexTask) {
 ## Development
 
 When building and testing this library, make sure to clone the submodules.
-Those are LaTeX projects, used for integration tests.
+Those are TeX projects, used for integration tests.
 
 ## Thanks
 

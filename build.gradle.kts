@@ -49,8 +49,8 @@ tasks {
 }
 
 pluginBundle {
-    website = "https://github.com/reimersoftware/latex-gradle-plugin"
-    vcsUrl = "https://github.com/reimersoftware/latex-gradle-plugin.git"
+    website = "https://github.com/reimersoftware/tex-gradle-plugin"
+    vcsUrl = "https://github.com/reimersoftware/tex-gradle-plugin.git"
     tags = listOf("maven", "maven central", "ossrh", "central", "publish")
 }
 

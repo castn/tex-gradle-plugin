@@ -6,11 +6,6 @@ import dev.reimer.tex.gradle.plugin.compiler.tex.TexCompilerType
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 
-/**
- * Gradle extension to create new dynamic tasks & maintain and manage latex artifacts.
- * Registered to Gradle as extension in LatexPlugin. Thereafter the instance can be accessed via project.latex
- *
- */
 open class TexExtension(
     project: Project
 ) : TexScope {
