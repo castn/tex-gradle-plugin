@@ -9,10 +9,16 @@ import java.io.FilenameFilter
 
 abstract class FilteredSourceTask : SourceTask() {
 
+    @get:Optional
+    @get:Nested
     open val fileFilter: FileFilter? = null
 
+    @get:Optional
+    @get:Nested
     open val filenameFilter: FilenameFilter? = null
 
+    @get:Optional
+    @get:Nested
     open val fileTreeElementFilter: ((FileTreeElement) -> Boolean)? = null
 
     /**
