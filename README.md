@@ -4,7 +4,7 @@
 
 # tex-gradle-plugin<sup>[α](#status-α)</sup>
 
-A Gradle plugin for building TeX/LaTeX projects.
+Gradle plugin for building TeX/LaTeX projects.
 
 ## Gradle Dependency
 
