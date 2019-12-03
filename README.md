@@ -1,4 +1,6 @@
-[![](https://jitpack.io/v/dev.reimer/tex-gradle-plugin.svg)](https://jitpack.io/#dev.reimer/tex-gradle-plugin)
+[![GitHub Actions](https://img.shields.io/github/workflow/status/reimersoftware/tex-gradle-plugin/Gradle%20CI?style=flat-square)](https://github.com/reimersoftware/tex-gradle-plugin/actions)
+[![Gradle plugin portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/dev/reimer/tex/dev.reimer.tex.gradle.plugin/maven-metadata.xml.svg?label=gradle&style=flat-square)](https://plugins.gradle.org/plugin/dev.reimer.tex)
+[![JitPack](https://img.shields.io/jitpack/v/github/reimersoftware/tex-gradle-plugin?style=flat-square)](https://jitpack.io/#dev.reimer/tex-gradle-plugin)
 
 # tex-gradle-plugin<sup>[α](#status-α)</sup>
 
@@ -6,18 +8,14 @@ A Gradle plugin for building TeX/LaTeX projects.
 
 ## Gradle Dependency
 
-This library is available on [**jitpack.io**](https://jitpack.io/#dev.reimer/tex-gradle-plugin).  
+The plugin is available from the Gradle [plugin portal](https://plugins.gradle.org/plugin/tex.reimer.wayback).  
 Add this in your `build.gradle.kts` or `build.gradle` file:
 
 <details open><summary>Kotlin</summary>
 
 ```kotlin
-repositories {
-    maven("https://jitpack.io")
-}
-
-dependencies {
-    implementation("dev.reimer:tex-gradle-plugin:<version>")
+plugins {
+  id("dev.reimer.tex") version "<version>"
 }
 ```
 
@@ -26,12 +24,8 @@ dependencies {
 <details><summary>Groovy</summary>
 
 ```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    implementation 'dev.reimer:tex-gradle-plugin:<version>'
+plugins {
+  id "dev.reimer.tex" version "<version>"
 }
 ```
 
