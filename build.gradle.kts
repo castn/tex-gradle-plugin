@@ -4,8 +4,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `java-gradle-plugin`
     kotlin("jvm") version "1.3.50"
+    `java-gradle-plugin`
     id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jetbrains.dokka") version "0.10.0"
     `maven-publish`
@@ -50,7 +50,16 @@ tasks {
 pluginBundle {
     website = "https://github.com/reimersoftware/tex-gradle-plugin"
     vcsUrl = "https://github.com/reimersoftware/tex-gradle-plugin.git"
-    tags = listOf("maven", "maven central", "ossrh", "central", "publish")
+    tags = listOf(
+        "tex",
+        "latex",
+        "pdflatex",
+        "bibtex",
+        "bibliography",
+        "biblatex",
+        "gradle",
+        "gradle-plugin"
+    )
 }
 
 gradlePlugin {
