@@ -15,6 +15,7 @@ import java.io.File
 
 abstract class DefaultBibliographyCompiler internal constructor() : DefaultTask(), BibliographyCompiler {
 
+    @get:Input
     protected abstract val command: String
 
     final override val jobName = project.property<String>()
