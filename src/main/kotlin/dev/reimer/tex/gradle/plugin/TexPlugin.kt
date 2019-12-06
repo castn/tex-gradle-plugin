@@ -3,6 +3,8 @@ package dev.reimer.tex.gradle.plugin
 import dev.reimer.tex.gradle.plugin.task.TexCompile
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.apply
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 
@@ -28,10 +30,10 @@ class TexPlugin : Plugin<Project> {
             project
         )
 
-        val assemble = project.tasks.named(ASSEMBLE_TASK_NAME)
+        val assemble: TaskProvider<Task> = project.tasks.named(ASSEMBLE_TASK_NAME)
 
         // Register standard task for compiling TeX source set.
-        val assembleTex = project.tasks.register(ASSEMBLE_TEX_TASK_NAME) { task ->
+        val assembleTex: TaskProvider<Task> = project.tasks.register(ASSEMBLE_TEX_TASK_NAME) { task ->
             // Make TeX build a dependency of the global build task.
             assemble.get().dependsOn(task)
         }
