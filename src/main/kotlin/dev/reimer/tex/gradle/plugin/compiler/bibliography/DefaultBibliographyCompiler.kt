@@ -69,7 +69,7 @@ abstract class DefaultBibliographyCompiler internal constructor(
         project.exec { spec ->
             spec.workingDir = aux.parentFile
             spec.executable = command
-            spec.args(aux.absolutePath)
+            spec.args(aux.nameWithoutExtension)
         }
         didWork = true
     }
