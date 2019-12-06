@@ -9,7 +9,7 @@ import java.io.File
 open class Biber : DefaultBibliographyCompiler("biber", Copier) {
 
     object Copier : BibliographyCopier {
-        private val BIBLATEX_NAMESPACE = "https://sourceforge.net/projects/biblatex"
+        private const val BIBLATEX_NAMESPACE = "https://sourceforge.net/projects/biblatex"
         private val BIB_DATA_NAME = QName(BIBLATEX_NAMESPACE, "bibdata")
         private val DATASOURCE_NAME = QName(BIBLATEX_NAMESPACE, "datasource")
 
