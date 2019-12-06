@@ -1,15 +1,19 @@
 package dev.reimer.tex.gradle.plugin.compiler.bibliography
 
 import dev.reimer.tex.gradle.plugin.internal.FileExtensions
+import org.gradle.api.provider.Provider
 import java.io.File
 
-open class Bibtex : DefaultBibliographyCompiler("bibtex", Copier) {
+open class Bibtex : DefaultBibliographyCompiler() {
 
-    object Copier : BibliographyCopier {
-        private val BIB_DATA_REGEX = Regex("""^\\bibdata\{([^}]+)}""")
-        private val BIB_STYLE_REGEX = Regex("""^\\bibstyle\{([^}]+)}""")
+    private companion object {
+        const val BIBTEX_COMMAND = "bibtex"
+        val CITATION_REGEX = Regex("""^\\citation""")
+        val BIB_DATA_REGEX = Regex("""^\\bibdata\{([^}]+)}""")
+        val BIB_STYLE_REGEX = Regex("""^\\bibstyle\{([^}]+)}""")
 
-        override fun findResources(auxFile: File): Iterable<File> {
+        fun parseResources(auxFile: File): Iterable<File> {
+            if (!auxFile.exists()) return emptyList()
             return auxFile.useLines { lines ->
                 lines.mapNotNull { line ->
                     val bibData = BIB_DATA_REGEX.find(line)
@@ -35,8 +39,23 @@ open class Bibtex : DefaultBibliographyCompiler("bibtex", Copier) {
                         }
                         else -> null
                     }
-                }.asIterable()
+                }.toList()
+            }
+        }
+
+        fun parseCitations(auxFile: File): Boolean {
+            if (!auxFile.exists()) return false
+            return auxFile.useLines { lines ->
+                lines.any { line ->
+                    CITATION_REGEX.containsMatchIn(line)
+                }
             }
         }
     }
+
+    final override val command = BIBTEX_COMMAND
+
+    final override val resources: Provider<Iterable<File>> = auxFile.map { parseResources(it.asFile) }
+
+    final override val containsCitations: Provider<Boolean> = auxFile.map { parseCitations(it.asFile) }
 }

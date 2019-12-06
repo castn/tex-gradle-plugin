@@ -1,54 +1,71 @@
 package dev.reimer.tex.gradle.plugin.compiler.bibliography
 
 import dev.reimer.tex.gradle.plugin.directoryProperty
-import dev.reimer.tex.gradle.plugin.fileProperty
+import dev.reimer.tex.gradle.plugin.internal.FileExtensions.AUX
+import dev.reimer.tex.gradle.plugin.internal.FileExtensions.BBL
+import dev.reimer.tex.gradle.plugin.property
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.io.FileNotFoundException
 
-abstract class DefaultBibliographyCompiler internal constructor(
-    private val command: String,
-    private val copier: BibliographyCopier
-) : DefaultTask(), BibliographyCompiler {
+abstract class DefaultBibliographyCompiler internal constructor() : DefaultTask(), BibliographyCompiler {
 
-    private companion object {
-        val CITATION_REGEX = Regex("""^\\citation""")
-    }
+    protected abstract val command: String
 
-    final override val auxFile = project.fileProperty()
+    final override val jobName = project.property<String>()
 
-    final override val texDir = project.directoryProperty()
+    final override val buildDir = project.directoryProperty()
+
+    final override val sourceDir = project.directoryProperty()
+
+    private val destinationName: Provider<String> = jobName.map { "$it.${BBL}" }
+
+    override val destination: Provider<RegularFile> =
+        project.layout.file(buildDir.map { it.asFile.resolve(destinationName.get()) })
+
+    private val auxFileName: Provider<String> = jobName.map { "$it.${AUX}" }
+
+    @get:InputFile
+    protected val auxFile: Provider<RegularFile> =
+        project.layout.file(buildDir.map { it.asFile.resolve(auxFileName.get()) })
+
+    /**
+     * Files that need to be copied from the source dir to the build dir,
+     * for the bibliography compiler to work.
+     */
+    @get:InputFiles
+    protected abstract val resources: Provider<Iterable<File>>
+
+    @get:Input
+    protected abstract val containsCitations: Provider<Boolean>
 
     @TaskAction
     final override fun compile() {
-        val aux = auxFile.get().asFile
-        if (!aux.exists()) {
-            throw GradleException("${aux.absolutePath} does not exist.", FileNotFoundException())
-        }
-
-        val containsCitations = aux.useLines { lines ->
-            lines.any { line ->
-                CITATION_REGEX.containsMatchIn(line)
-            }
-        }
-        if (!containsCitations) {
+        println(containsCitations.get())
+        println(resources.get().joinToString())
+        if (!containsCitations.get()) {
             didWork = false
             return
         }
 
         // Copy bibliography resources to build folder.
-        val sourceDir = texDir.get().asFile
-        val resources = copier.findResources(aux)
+        val sourceDir = sourceDir.get().asFile
+        val buildDir = buildDir.get().asFile
+        val resources = resources.get()
         resources.forEach { file ->
-            sourceDir.resolve(file).takeIf(File::exists)?.copyTo(aux.resolveSibling(file))
+            logger.quiet("Copying ${file.path} to build directory.")
+            sourceDir.resolve(file).takeIf(File::exists)?.copyTo(buildDir.resolve(file))
         }
 
         project.exec { spec ->
-            spec.workingDir = aux.parentFile
+            spec.workingDir = buildDir
             spec.executable = command
-            spec.args(aux.nameWithoutExtension)
+            spec.args(jobName.get())
         }
         didWork = true
     }

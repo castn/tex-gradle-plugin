@@ -1,10 +1,12 @@
 package dev.reimer.tex.gradle.plugin.task
 
-import dev.reimer.tex.gradle.plugin.*
+import dev.reimer.tex.gradle.plugin.TexPlugin
 import dev.reimer.tex.gradle.plugin.compiler.CompilerFactory
-import dev.reimer.tex.gradle.plugin.internal.FileExtensions.AUX
+import dev.reimer.tex.gradle.plugin.directoryProperty
 import dev.reimer.tex.gradle.plugin.internal.FileExtensions.TEX
 import dev.reimer.tex.gradle.plugin.internal.TexCompileFileFilter
+import dev.reimer.tex.gradle.plugin.property
+import dev.reimer.tex.gradle.plugin.texExtension
 import org.gradle.api.file.RelativePath
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.register
@@ -117,10 +119,11 @@ open class TexCompile : FilteredSourceTask() {
     }
 
     private fun compileBibliography(texFile: File, path: RelativePath): Boolean {
-        val auxFile = buildDirFile.resolve(path.lastName).withExtension(AUX)
+        val jobName = path.lastName.substringBeforeLast('.')
         val task = CompilerFactory.createBibliographyCompiler(project, bibliographyCompiler.get())
-        task.auxFile.set(auxFile)
-        task.texDir.set(texFile.parentFile)
+        task.jobName.set(jobName)
+        task.buildDir.set(buildDir)
+        task.sourceDir.set(texFile.parentFile)
         task.compile()
         return task.didWork
     }
