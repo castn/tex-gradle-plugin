@@ -11,7 +11,13 @@ import org.slf4j.LoggerFactory
 
 class TexTests : StringSpec({
 
-    val configs = setOf(ElsevierTest, LatexGuideTest)
+    val configs = setOf(
+        ElsevierTest,
+        LatexGuideTest,
+        SimpleLatexTest,
+        SimpleLatexBibtexTest,
+        SimpleLatexBiberTest
+    )
     configs.forEach { test ->
         log.debug("Test to be executed: $test from ${test.directory}")
 
