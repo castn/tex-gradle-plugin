@@ -70,9 +70,9 @@ open class Biber : DefaultBibliographyCompiler() {
         project.layout.file(buildDir.map { it.asFile.resolve(bcfFileName.get()) })
 
     final override val resources: Provider<Iterable<File>> =
-        bcfFile.map { println(it.asFile); parseResources(it.asFile) }
+        bcfFile.map { parseResources(it.asFile) }
 
     final override val containsCitations: Provider<Boolean> =
-        bcfFile.map { println(it.asFile); parseCitations(it.asFile) }
+        bcfFile.map { parseCitations(it.asFile) }
 
 }
