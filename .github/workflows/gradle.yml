@@ -19,8 +19,8 @@ jobs:
           apt-get update
           apt-get install -y openjdk-8-jdk
       - name: Checkout repository
-          uses: actions/checkout@v1
-          with:
-            submodules: true
-          - name: Build with Gradle
-            run: ./gradlew build
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+      - name: Build with Gradle
+        run: ./gradlew build
