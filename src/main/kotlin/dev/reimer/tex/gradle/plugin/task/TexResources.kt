@@ -45,14 +45,12 @@ open class TexResources : FilteredSourceTask() {
 
     private fun convertImages() {
         source.visit { element ->
-            if (element.file.isFile) {
-                convertImage(element.file, element.relativePath)
-            }
+            convertImage(element.file, element.relativePath)
         }
     }
 
     private fun convertImage(file: File, path: RelativePath) {
-        val outputDirectory: File = this@TexResources.destinationDir.get()
+        val outputDirectory: File = destinationDir.get()
             .asFile
             .resolve(path.pathString)
             .parentFile

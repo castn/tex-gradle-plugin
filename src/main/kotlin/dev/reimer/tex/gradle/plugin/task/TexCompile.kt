@@ -3,7 +3,6 @@ package dev.reimer.tex.gradle.plugin.task
 import dev.reimer.tex.gradle.plugin.TexPlugin
 import dev.reimer.tex.gradle.plugin.compiler.CompilerFactory
 import dev.reimer.tex.gradle.plugin.directoryProperty
-import dev.reimer.tex.gradle.plugin.internal.FileExtensions.TEX
 import dev.reimer.tex.gradle.plugin.internal.TexCompileFileFilter
 import dev.reimer.tex.gradle.plugin.property
 import dev.reimer.tex.gradle.plugin.texExtension
@@ -86,10 +85,8 @@ open class TexCompile : FilteredSourceTask() {
 
     private fun compileAll() {
         source.visit { element ->
-            if (element.file.extension == TEX && element.file.isFile) {
-                clearBuildDir()
-                compileSingle(element.file, element.relativePath)
-            }
+            clearBuildDir()
+            compileSingle(element.file, element.relativePath)
         }
     }
 
