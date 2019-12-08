@@ -11,9 +11,13 @@ jobs:
     steps:
       - name: TeX tool versions
         run: |
+          mpm --version
           pdflatex --version
           bibtex --version
           biber --version
+      - name: Set up MikTeX
+        run: |
+          mpm --upgrade --package-level=complete --upgrade
       - name: Set up JDK 1.8
         run: |
           apt-get update
