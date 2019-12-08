@@ -15,8 +15,11 @@ class TexTests : StringSpec({
         ElsevierTest,
         LatexGuideTest,
         SimpleLatexTest,
+        SimpleLatexIncludeTest,
         SimpleLatexBibtexTest,
-        SimpleLatexBiberTest
+        SimpleLatexBibtexIncludeTest,
+        SimpleLatexBiberTest,
+        SimpleLatexBiberIncludeTest
     )
     configs.forEach { test ->
         log.debug("Test to be executed: $test from ${test.directory}")
