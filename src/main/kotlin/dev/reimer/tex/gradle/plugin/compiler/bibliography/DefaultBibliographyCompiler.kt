@@ -47,12 +47,12 @@ abstract class DefaultBibliographyCompiler internal constructor() : DefaultTask(
 
     @TaskAction
     final override fun compile() {
-        println(containsCitations.get())
-        println(resources.get().joinToString())
         if (!containsCitations.get()) {
+            logger.info("Found no citations, skipping")
             didWork = false
             return
         }
+        println(resources.get().joinToString())
 
         // Copy bibliography resources to build folder.
         val sourceDir = sourceDir.get().asFile
