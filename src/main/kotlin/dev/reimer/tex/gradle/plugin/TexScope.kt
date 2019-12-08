@@ -14,6 +14,4 @@ interface TexScope {
     val imageConverter: Property<ImageConverterType>
 
     val quiet: Property<Boolean>
-
-    val overwrite: Property<Boolean>
 }

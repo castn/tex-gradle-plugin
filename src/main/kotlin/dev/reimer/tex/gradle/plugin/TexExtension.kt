@@ -17,6 +17,4 @@ open class TexExtension(
     final override val imageConverter = project.property { ImageConverterType.INKSCAPE_PDF }
 
     final override val quiet: Property<Boolean> = project.property { true }
-
-    final override val overwrite: Property<Boolean> = project.property { true }
 }

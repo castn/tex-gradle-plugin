@@ -1,11 +1,8 @@
 package dev.reimer.tex.gradle.plugin.task
 
-import dev.reimer.tex.gradle.plugin.TexPlugin
+import dev.reimer.tex.gradle.plugin.*
 import dev.reimer.tex.gradle.plugin.compiler.CompilerFactory
-import dev.reimer.tex.gradle.plugin.directoryProperty
 import dev.reimer.tex.gradle.plugin.internal.TexCompileFileFilter
-import dev.reimer.tex.gradle.plugin.property
-import dev.reimer.tex.gradle.plugin.texExtension
 import org.gradle.api.file.RelativePath
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.register
@@ -15,7 +12,7 @@ import java.io.FileFilter
 /**
  * Compile a TeX project.
  */
-open class TexCompile : FilteredSourceTask() {
+open class TexCompile : FilteredSourceTask(), TexScope {
 
     @Internal
     override fun getGroup() = TexPlugin.TASK_GROUP
@@ -24,19 +21,16 @@ open class TexCompile : FilteredSourceTask() {
     override fun getDescription() = "Compiles TeX sources."
 
     @get:Input
-    val bibliographyCompiler = project.property(texExtension.bibliographyCompiler)
+    override val bibliographyCompiler = project.property(texExtension.bibliographyCompiler)
 
     @get:Input
-    val texCompiler = project.property(texExtension.texCompiler)
+    override val texCompiler = project.property(texExtension.texCompiler)
 
     @get:Input
-    val imageConverter = project.property(texExtension.imageConverter)
+    override val imageConverter = project.property(texExtension.imageConverter)
 
     @get:Input
-    val quiet = project.property(texExtension.quiet)
-
-    @get:Input
-    val overwrite = project.property(texExtension.overwrite)
+    override val quiet = project.property(texExtension.quiet)
 
     @get:Optional
     @get:OutputDirectory
@@ -109,7 +103,6 @@ open class TexCompile : FilteredSourceTask() {
         val task = CompilerFactory.createTexCompiler(project, texCompiler.get())
         task.tex.set(texFile)
         task.quiet.set(quiet)
-        task.overwrite.set(overwrite)
         task.destinationDir.set(destinationDir)
         task.buildDir.set(buildDir)
         task.compileTex()

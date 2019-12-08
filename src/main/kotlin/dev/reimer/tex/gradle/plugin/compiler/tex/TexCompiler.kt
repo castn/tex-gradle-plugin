@@ -22,9 +22,6 @@ interface TexCompiler : Task {
     @get:Input
     val quiet: Property<Boolean>
 
-    @get:Input
-    val overwrite: Property<Boolean>
-
     @get:Internal
     val destinationDir: DirectoryProperty
 

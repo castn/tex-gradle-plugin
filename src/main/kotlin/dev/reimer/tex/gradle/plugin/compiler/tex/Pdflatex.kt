@@ -15,8 +15,6 @@ open class Pdflatex : DefaultTask(), TexCompiler {
 
     final override val quiet = project.property<Boolean>()
 
-    final override val overwrite = project.property<Boolean>() // TODO Use this property.
-
     final override val destinationDir = project.directoryProperty()
 
     final override val buildDir = project.directoryProperty()
