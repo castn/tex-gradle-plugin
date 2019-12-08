@@ -62,7 +62,7 @@ open class Bibtex : DefaultBibliographyCompiler() {
     final override val command = BIBTEX_COMMAND
 
     final override val resources: Provider<Iterable<File>> =
-        auxFile.map { parseResources(it.asFile, buildDir.get().asFile) }
+        auxFile.map { parseResources(buildDir.get().asFile, it.asFile) }
 
     final override val containsCitations: Provider<Boolean> = auxFile.map { parseCitations(it.asFile) }
 }
