@@ -61,6 +61,8 @@ open class Bibtex : DefaultBibliographyCompiler() {
 
     final override val command = BIBTEX_COMMAND
 
+    final override val quietArgument = "-terse"
+
     final override val resources: Provider<Iterable<File>> =
         auxFile.map { parseResources(buildDir.get().asFile, it.asFile) }
 

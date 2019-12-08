@@ -24,6 +24,9 @@ interface BibliographyCompiler : Task {
     @get:Input
     val sourceDir: DirectoryProperty
 
+    @get:Input
+    val quiet: Property<Boolean>
+
     @get:OutputFile
     val destination: Provider<RegularFile>
 

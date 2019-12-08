@@ -121,6 +121,7 @@ open class TexCompile : FilteredSourceTask() {
         task.jobName.set(jobName)
         task.buildDir.set(buildDir)
         task.sourceDir.set(texFile.parentFile)
+        task.quiet.set(quiet)
         task.compile()
         return task.didWork
     }

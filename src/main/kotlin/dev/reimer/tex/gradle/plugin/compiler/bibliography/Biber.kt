@@ -63,6 +63,8 @@ open class Biber : DefaultBibliographyCompiler() {
 
     final override val command = BIBER_COMMAND
 
+    final override val quietArgument = "--quiet"
+
     private val bcfFileName: Provider<String> = jobName.map { "$it.${FileExtensions.BCF}" }
 
     @get:InputFile

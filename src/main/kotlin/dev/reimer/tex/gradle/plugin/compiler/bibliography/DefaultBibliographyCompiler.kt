@@ -24,6 +24,11 @@ abstract class DefaultBibliographyCompiler internal constructor() : DefaultTask(
 
     final override val sourceDir = project.directoryProperty()
 
+    final override val quiet = project.property<Boolean>()
+
+    @get:Input
+    protected abstract val quietArgument: String
+
     private val destinationName: Provider<String> = jobName.map { "$it.${BBL}" }
 
     override val destination: Provider<RegularFile> =
@@ -65,6 +70,9 @@ abstract class DefaultBibliographyCompiler internal constructor() : DefaultTask(
         project.exec { spec ->
             spec.workingDir = buildDir
             spec.executable = command
+            if (quiet.get()) {
+                spec.args(quietArgument)
+            }
             spec.args(jobName.get())
         }
         didWork = true
