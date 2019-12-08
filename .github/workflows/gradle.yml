@@ -9,13 +9,18 @@ jobs:
     container: miktex/miktex-build-ubuntu:bionic
 
     steps:
+      - name: TeX tool versions
+        run: |
+          pdflatex --version
+          bibtex --version
+          biber --version
       - name: Set up JDK 1.8
         run: |
           apt-get update
           apt-get install -y openjdk-8-jdk
       - name: Checkout repository
-        uses: actions/checkout@v1
-        with:
-          submodules: true
-      - name: Build with Gradle
-        run: ./gradlew build
+          uses: actions/checkout@v1
+          with:
+            submodules: true
+          - name: Build with Gradle
+            run: ./gradlew build
