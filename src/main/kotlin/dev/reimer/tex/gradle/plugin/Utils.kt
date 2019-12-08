@@ -9,13 +9,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.property
 import java.io.File
 
-inline fun <reified T> Project.property(): Property<T> = objects.property()
+inline fun <reified T : Any> Project.property(): Property<T> = objects.property()
 
 @Suppress("UnstableApiUsage")
-inline fun <reified T> Project.property(default: Provider<T>): Property<T> =
+inline fun <reified T : Any> Project.property(default: Provider<T>): Property<T> =
     property<T>().convention(default)
 
-inline fun <reified T> Project.property(noinline default: () -> T): Property<T> =
+inline fun <reified T : Any> Project.property(noinline default: () -> T): Property<T> =
     property<T>(provider(default))
 
 @Suppress("UnstableApiUsage")
