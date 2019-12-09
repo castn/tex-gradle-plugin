@@ -6,7 +6,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: miktex/miktex
+    container: miktex/miktex:2.9.6990
 
     steps:
       - name: TeX tool versions
@@ -16,8 +16,7 @@ jobs:
           bibtex --version
           biber --version
       - name: Set up MikTeX
-        run: |
-          mpm --upgrade --package-level=complete --upgrade
+        run: 'initexmf --set-config-value [MPM]AutoInstall=1'
       - name: Set up JDK 1.8
         run: |
           apt-get update
