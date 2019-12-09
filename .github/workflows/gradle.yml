@@ -16,11 +16,12 @@ jobs:
           bibtex --version
           biber --version
       - name: Set up MikTeX
-        run: 'initexmf --set-config-value [MPM]AutoInstall=1'
+        run: 'initexmf --admin --set-config-value [MPM]AutoInstall=1'
       - name: Set up JDK 1.8
         run: |
           apt-get update
-          apt-get install -y openjdk-8-jdk
+          apt-get install -y --no-install-recommends openjdk-8-jdk
+          rm -rf /var/lib/apt/lists/*
       - name: Checkout repository
         uses: actions/checkout@v1
         with:
