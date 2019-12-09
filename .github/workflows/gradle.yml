@@ -6,13 +6,15 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: docker.pkg.github.com/reimersoftware/tex-docker/miktex-on-the-fly:latest
+    container: miktex/miktex:2.9.6990
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v1
         with:
           submodules: true
+      - name: Set up MikTeX
+        run: 'initexmf --admin --set-config-value [MPM]AutoInstall=1'
       - name: Set up JDK 1.8
         run: |
           apt-get update
