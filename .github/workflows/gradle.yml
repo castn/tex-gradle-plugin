@@ -6,25 +6,17 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: miktex/miktex:2.9.6990
+    container: docker.pkg.github.com/reimersoftware/tex-docker/miktex-on-the-fly:latest
 
     steps:
-      - name: TeX tool versions
-        run: |
-          mpm --version
-          pdflatex --version
-          bibtex --version
-          biber --version
-      - name: Set up MikTeX
-        run: 'initexmf --admin --set-config-value [MPM]AutoInstall=1'
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          submodules: true
       - name: Set up JDK 1.8
         run: |
           apt-get update
           apt-get install -y --no-install-recommends openjdk-8-jdk
           rm -rf /var/lib/apt/lists/*
-      - name: Checkout repository
-        uses: actions/checkout@v1
-        with:
-          submodules: true
       - name: Build with Gradle
         run: ./gradlew build
