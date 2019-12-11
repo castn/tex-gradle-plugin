@@ -63,7 +63,7 @@ abstract class DefaultBibliographyCompiler internal constructor() : DefaultTask(
         val buildDir = buildDir.get().asFile
         val resources = resources.get()
         resources.forEach { file ->
-            logger.quiet("Copying resource ${file.path} to build directory.")
+            logger.info("Copying resource ${file.path} to build directory.")
             sourceDir.resolve(file).takeIf(File::exists)?.copyTo(buildDir.resolve(file))
         }
 
