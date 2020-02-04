@@ -3,7 +3,7 @@
 [![JitPack](https://img.shields.io/jitpack/v/github/reimersoftware/tex-gradle-plugin?style=flat-square)](https://jitpack.io/#dev.reimer/tex-gradle-plugin)
 [![Central Security Project](https://img.shields.io/badge/report-vulnerability-e10e71?style=flat-square)](https://hackerone.com/central-security-project/reports/new)
 
-# tex-gradle-plugin<sup>[α](#status-α)</sup>
+# 📄 tex-gradle-plugin<sup>[α](#status-α)</sup>
 
 Gradle plugin for building TeX/LaTeX projects.
 
