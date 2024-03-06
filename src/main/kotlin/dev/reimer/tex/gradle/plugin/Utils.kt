@@ -1,12 +1,12 @@
 package dev.reimer.tex.gradle.plugin
 
-import dev.reimer.tex.gradle.plugin.internal.FilteredFileTree
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.*
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.property
+import org.gradle.kotlin.dsl.closureOf
 import java.io.File
 
 inline fun <reified T : Any> Project.property(): Property<T> = objects.property()
@@ -55,4 +55,4 @@ operator fun File.contains(other: File): Boolean {
  * @param filter The criteria to use to select the contents of the filtered collection.
  * @return The filtered collection.
  */
-fun FileTree.filterAsTree(filter: (FileTreeElement) -> Boolean): FileTree = FilteredFileTree(this, filter)
+fun FileTree.filterAsTree(filter: (FileTreeElement) -> Boolean): FileTree = this.filter(closureOf<FileTreeElement> { filter(this) }).asFileTree
