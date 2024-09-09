@@ -67,8 +67,8 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            artifact(sourcesJar.get())
-            artifact(javadocJar.get())
+            //artifact(sourcesJar.get())
+            //artifact(javadocJar.get())
         }
     }
 }
