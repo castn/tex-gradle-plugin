@@ -1,9 +1,9 @@
 package dev.reimer.tex.gradle.plugin.compiler.bibliography
 
 import dev.reimer.tex.gradle.plugin.internal.FileExtensions
+import groovy.namespace.QName
 import groovy.util.Node
-import groovy.util.XmlParser
-import groovy.xml.QName
+import groovy.xml.XmlParser
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputFile

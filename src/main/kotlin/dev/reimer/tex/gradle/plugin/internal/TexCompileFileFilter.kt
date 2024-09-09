@@ -7,5 +7,5 @@ import java.io.FileFilter
 
 internal class TexCompileFileFilter(private val project: Project) : FileFilter {
     override fun accept(pathname: File) =
-        pathname.extension == FileExtensions.TEX && pathname.isFile && pathname !in project.buildDir
+        pathname.extension == FileExtensions.TEX && pathname.isFile && pathname !in project.layout.buildDirectory.asFileTree
 }
