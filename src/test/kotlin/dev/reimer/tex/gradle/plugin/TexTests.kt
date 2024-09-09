@@ -22,16 +22,16 @@ class TexTests : StringSpec({
         SimpleLatexBiberIncludeTest
     )
     configs.forEach { test ->
-        log.debug("Test to be executed: $test from ${test.directory}")
+        log.debug("Test to be executed: {} from {}", test, test.directory)
 
         temporaryFolder {
             // Copy sample dir.
             test.directory.copyRecursively(root)
 
-            // Create build file.
+            // Create a build file.
             newFile("build.gradle.kts").writeText(test.buildFile)
 
-            log.debug("Test has been copied into $root and is ready to get executed")
+            log.debug("Test has been copied into {} and is ready to get executed", root)
 
             test.description {
                 // Delete expected files before build.

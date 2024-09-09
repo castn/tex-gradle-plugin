@@ -55,7 +55,7 @@ open class TexCompile : FilteredSourceTask(), TexScope {
             ) {
                 imageConverter.set(tex.imageConverter)
                 destinationDir.set(tex.buildDir)
-                setSource(tex.source)
+                source = tex.source
             }
         }
 
