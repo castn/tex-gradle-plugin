@@ -59,18 +59,18 @@ task buildTexFile(type: TexCompile) {
 
 (You may need to import [`TexCompile`](src/main/kotlin/dev/reimer/tex/gradle/plugin/task/TexCompile.kt))
 
-This configuration autodetects if a `sample.bib` is present, 
+This configuration autodetects if a `sample.bib` is present,
 and builds the resulting `sample.pdf`.
 Compiled PDFs are stored in the `out/` directory under the project root.
-Setting the `destinationDir` property overwrites 
+Setting the `destinationDir` property overwrites
 the default output directory.
 
 You can register as many tex compile tasks as you like.
-Alternatively, reference a directory, file tree 
-or [more](https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#files-java.lang.Object...-), 
+Alternatively, reference a directory, file tree
+or [more](https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#files-java.lang.Object...-),
 using the `source()` task configuration.
 
-And don't worry about a messy `out/` directory, 
+And don't worry about a messy `out/` directory,
 as the folder structure will be preserved.
 
 ### Options
@@ -154,12 +154,13 @@ Those are TeX projects, used for integration tests.
 
 ## Thanks
 
-I am grateful to @DanySK for his work on the forked library, 
+I am grateful to @DanySK for his work on the forked library,
 which was licensed under the [Apache License 2.0](https://github.com/DanySK/gradle-latex/blob/master/LICENSE).
 
 ## Status α
 
 ⚠️ _Warning:_ This project is in an experimental alpha stage:
+
 - The API may be changed at any time without further notice.
 - Development still happens on `master`.
 - Pull Requests are highly appreciated!
