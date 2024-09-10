@@ -30,6 +30,7 @@ open class Bibtex : DefaultBibliographyCompiler() {
                             }
                             listOf(File(file))
                         }
+
                         bibStyle != null -> {
                             val file = bibStyle.groupValues[1].let { name ->
                                 when {
@@ -39,10 +40,12 @@ open class Bibtex : DefaultBibliographyCompiler() {
                             }
                             listOf(File(file))
                         }
+
                         input != null -> {
                             val file = input.groupValues[1]
                             parseResources(buildDir, buildDir.resolve(file))
                         }
+
                         else -> emptyList()
                     }
                 }.toList()

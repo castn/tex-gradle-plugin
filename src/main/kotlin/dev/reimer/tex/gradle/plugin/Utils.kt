@@ -7,7 +7,6 @@ import org.gradle.api.file.*
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.property
-import org.gradle.kotlin.dsl.closureOf
 import java.io.File
 
 inline fun <reified T : Any> Project.property(): Property<T> = objects.property()

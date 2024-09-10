@@ -1,6 +1,5 @@
 package dev.reimer.tex.gradle.plugin.internal
 
-import dev.reimer.tex.gradle.plugin.contains
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileFilter

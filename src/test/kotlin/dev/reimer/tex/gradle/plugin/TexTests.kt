@@ -61,7 +61,7 @@ class TexTests : StringSpec({
                 }
             }
         }
-        }
+    }
 }) {
     companion object {
         val log: Logger = LoggerFactory.getLogger(TexTests::class.java)
