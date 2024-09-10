@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 class TexTests : StringSpec({
 
     val configs = setOf(
-        //ElsevierTest,
+        ElsevierTest,
         LatexGuideTest,
         SimpleLatexTest,
         SimpleLatexIncludeTest,
