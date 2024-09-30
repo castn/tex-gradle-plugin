@@ -13,6 +13,7 @@ class TexPlugin : Plugin<Project> {
     companion object {
         const val TASK_GROUP = "tex"
         const val EXTENSION_NAME = "tex"
+
         @Suppress("UnstableApiUsage")
         const val ASSEMBLE_TASK_NAME = LifecycleBasePlugin.ASSEMBLE_TASK_NAME
         const val ASSEMBLE_TEX_TASK_NAME = ASSEMBLE_TASK_NAME + "Tex"

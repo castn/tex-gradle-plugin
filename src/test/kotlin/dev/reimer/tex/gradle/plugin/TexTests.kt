@@ -1,9 +1,9 @@
 package dev.reimer.tex.gradle.plugin
 
-import io.kotlintest.matchers.file.shouldBeAFile
-import io.kotlintest.matchers.file.shouldExist
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.file.shouldBeAFile
+import io.kotest.matchers.file.shouldExist
+import io.kotest.matchers.shouldBe
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.slf4j.Logger
@@ -61,7 +61,7 @@ class TexTests : StringSpec({
                 }
             }
         }
-        }
+    }
 }) {
     companion object {
         val log: Logger = LoggerFactory.getLogger(TexTests::class.java)

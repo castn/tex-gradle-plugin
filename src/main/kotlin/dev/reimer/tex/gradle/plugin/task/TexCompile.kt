@@ -5,9 +5,11 @@ import dev.reimer.tex.gradle.plugin.compiler.CompilerFactory
 import dev.reimer.tex.gradle.plugin.internal.TexCompileFileFilter
 import org.gradle.api.file.RelativePath
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Optional
 import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.io.FileFilter
+import java.util.*
 
 /**
  * Compile a TeX project.
@@ -43,17 +45,17 @@ open class TexCompile : FilteredSourceTask(), TexScope {
      */
     @get:Internal
     val buildDir = project.directoryProperty {
-        project.buildDir.resolve(TexPlugin.EXTENSION_NAME).resolve(name)
+        project.layout.buildDirectory.get().asFile.resolve(TexPlugin.EXTENSION_NAME).resolve(name)
     }
 
     init {
         val generateResources = let { tex ->
             project.tasks.register<TexResources>(
-                "generateResourcesFor${name.capitalize()}"
+                "generateResourcesFor${name.replaceFirstChar(Char::titlecase)}"
             ) {
                 imageConverter.set(tex.imageConverter)
                 destinationDir.set(tex.buildDir)
-                setSource(tex.source)
+                source = tex.source
             }
         }
 
