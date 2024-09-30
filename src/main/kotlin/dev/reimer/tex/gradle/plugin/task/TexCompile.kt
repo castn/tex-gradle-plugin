@@ -51,7 +51,7 @@ open class TexCompile : FilteredSourceTask(), TexScope {
     init {
         val generateResources = let { tex ->
             project.tasks.register<TexResources>(
-                "generateResourcesFor${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+                "generateResourcesFor${name.replaceFirstChar(Char::titlecase)}"
             ) {
                 imageConverter.set(tex.imageConverter)
                 destinationDir.set(tex.buildDir)
