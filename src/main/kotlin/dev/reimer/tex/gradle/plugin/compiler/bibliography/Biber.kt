@@ -6,7 +6,6 @@ import groovy.util.Node
 import groovy.xml.XmlParser
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import java.io.File
 
