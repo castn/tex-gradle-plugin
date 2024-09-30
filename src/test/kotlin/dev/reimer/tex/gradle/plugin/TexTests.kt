@@ -22,7 +22,7 @@ class TexTests : StringSpec({
         SimpleLatexBiberIncludeTest
     )
     configs.forEach { test ->
-        log.debug("Test to be executed: {} from {}", test, test.directory)
+        log.debug("Test to be executed: $test from ${test.directory}")
 
         temporaryFolder {
             // Copy sample dir.
