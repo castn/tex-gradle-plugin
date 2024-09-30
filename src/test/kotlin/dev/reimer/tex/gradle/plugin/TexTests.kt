@@ -28,7 +28,7 @@ class TexTests : StringSpec({
             // Copy sample dir.
             test.directory.copyRecursively(root)
 
-            // Create a build file.
+            // Create build file.
             newFile("build.gradle.kts").writeText(test.buildFile)
 
             log.debug("Test has been copied into $root and is ready to get executed")
