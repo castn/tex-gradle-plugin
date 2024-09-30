@@ -31,7 +31,7 @@ class TexTests : StringSpec({
             // Create a build file.
             newFile("build.gradle.kts").writeText(test.buildFile)
 
-            log.debug("Test has been copied into {} and is ready to get executed", root)
+            log.debug("Test has been copied into $root and is ready to get executed")
 
             test.description {
                 // Delete expected files before build.
