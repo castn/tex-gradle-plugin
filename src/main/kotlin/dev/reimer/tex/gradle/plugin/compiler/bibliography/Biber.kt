@@ -7,6 +7,7 @@ import groovy.xml.XmlParser
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import java.io.File
 
 open class Biber : DefaultBibliographyCompiler() {
@@ -67,7 +68,7 @@ open class Biber : DefaultBibliographyCompiler() {
 
     private val bcfFileName: Provider<String> = jobName.map { "$it.${FileExtensions.BCF}" }
 
-    @get:InputDirectory
+    @get:InputFile
     protected val bcfFile: Provider<RegularFile> =
         project.layout.file(buildDir.map { it.asFile.resolve(bcfFileName.get()) })
 
