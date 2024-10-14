@@ -1,6 +1,6 @@
-[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/heinrichreimer/tex-gradle-plugin/gradle.yml?branch=master&style=flat-square)](https://github.com/heinrichreimer/tex-gradle-plugin/actions/workflows/gradle.yml)
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/janheinrichmerker/tex-gradle-plugin/gradle.yml?branch=master&style=flat-square)](https://github.com/janheinrichmerker/tex-gradle-plugin/actions/workflows/gradle.yml)
 [![Gradle plugin portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/dev/reimer/tex/dev.reimer.tex.gradle.plugin/maven-metadata.xml.svg?label=gradle&style=flat-square)](https://plugins.gradle.org/plugin/dev.reimer.tex)
-[![JitPack](https://img.shields.io/jitpack/v/github/heinrichreimer/tex-gradle-plugin?style=flat-square)](https://jitpack.io/#dev.reimer/tex-gradle-plugin)
+[![JitPack](https://img.shields.io/jitpack/v/github/janheinrichmerker/tex-gradle-plugin?style=flat-square)](https://jitpack.io/#dev.reimer/tex-gradle-plugin)
 
 # 📄 tex-gradle-plugin<sup>[α](#status-α)</sup>
 
